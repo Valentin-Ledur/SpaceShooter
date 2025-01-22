@@ -1,0 +1,26 @@
+Version 1.0 :
+fait :
+	- Liste multi type.
+	- Normalize() pour les vecteur et modification en float.
+	- Test Asteroid.
+à faire :
+	- Collision asteroids/projectiles du joueur.
+	- Alien.
+	- Menu :
+		- boutons qui change de couleur;
+		- chargement du/des fichier(s) 
+		  de sauvegarde avec nom du joueur;
+	- Joueur qui suit la souris.
+	- Programme principal optimisé.
+
+Version 2.0 :
+	- Ajout de différents ennemis (asteroid qui suit le joueur...).
+	- Attribution des touches.
+	- Tuto.
+	- Meilleur texture.
+	- Son.
+
+Version 3.0;
+	- Mode de jeu.
+
+...
