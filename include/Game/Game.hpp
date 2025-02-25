@@ -43,7 +43,7 @@ private:
 
     unsigned int addNewAsteroid;
     unsigned int addMore;
-    unsigned int timeForMore;
+    unsigned int timeNew;
 
 public:
     Game();

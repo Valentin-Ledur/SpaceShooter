@@ -87,8 +87,8 @@ Game::Game(){
     asteroid_list = std::list<Asteroid>();
 
     addNewAsteroid = 0;
-    addMore = 1;
-    timeForMore = 5000;
+    addMore = 1000;
+    timeNew = 500;
 }
 
 Game::~Game(){
@@ -108,8 +108,13 @@ int Game::Random(int range_min, int range_max){
 void Game::AddAsteroid(){
     if (addNewAsteroid < SDL_GetTicks()){
         asteroid_list.push_back(Asteroid(width, height));
-        addNewAsteroid += 500;
+        addNewAsteroid += timeNew;
     }
+    if (addMore < SDL_GetTicks() && timeNew > 100){
+            timeNew -= 50;
+            addMore += 1000;
+    }
+
 }
 
 GameStatut Game::HandleKey(SDL_Event event){
@@ -163,6 +168,8 @@ void Game::Update(){
                             asteroid_list.push_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
                             asteroid_list.push_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
                             asteroid_list.erase(asteroid);     
+                        }else{
+                            asteroid_list.erase(asteroid);
                         }
                         projectile_list.erase(projectile);
                         score += __SCORE__ASTEROID__;
@@ -179,12 +186,14 @@ void Game::Update(){
                 asteroid->Move();
                 if (asteroid->IsOutScreen(width, height)){
                     asteroid_list.erase(asteroid);
+                    continue;
                 }else if(asteroid->IsInside(player.GetPositionX(), player.GetPositionY())){
                     player.DecreaseHP(1);
                     asteroid_list.erase(asteroid);
-                    if (player.GetHP() == 0){
+                    if (player.GetHP() <= 0){
                         statut = STOP;
                     }
+                    continue;
                 }else if(asteroid->GetSize() == 1){
                     asteroid->CopyInRenderer(asteroid_texture_50, renderer);
                 }else if(asteroid->GetSize() == 2){
@@ -208,7 +217,7 @@ void Game::Update(){
         default:
             break;
         }
-
+        
         int delta = SDL_GetTicks() - start;
         if (delta < desiredDelta){
             SDL_Delay(desiredDelta - delta);

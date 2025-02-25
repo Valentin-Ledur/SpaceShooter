@@ -30,22 +30,21 @@ void Player::Move(int width, int height){
         position_y -= 5;
     if (down && position_y < height - 13)
         position_y += 5;
-    if (right && position_x < width - 13)
+    if (right && position_x < width - 63)
         position_x += 5;
-    if (left && position_x > 13)
+    if (left && position_x > 63)
         position_x -= 5;
 }
 
 bool Player::IsHit(float _position_x, float _position_y){
-    if ((_position_x >= position_x-12 && _position_x <= position_x+12) && (_position_y >= position_y-12 && _position_y <= position_y+12)){
+    if ((_position_x >= position_x-63 && _position_x <= position_x+63) && (_position_y >= position_y-13 && _position_y <= position_y+13)){
         return true;
     }
     return false;
 }
 
 void Player::CopyInRenderer(SDL_Texture *texture, SDL_Renderer *renderer){
-    SDL_Rect position = {(int) position_x-12, (int) position_y-12, 25, 25};
-
+    SDL_Rect position = {(int) position_x-63, (int) position_y-13, 125, 25};
     //Ajout de la texture au rendu.
     if(SDL_RenderCopyEx(renderer, texture, NULL, &position, angle, NULL, SDL_FLIP_NONE)){
         SDL_Log("Erreur: chargement de l'image du joueur dans le rendu : %s\n", SDL_GetError());
@@ -93,7 +92,7 @@ void Player::AddProjectile(Projectile _projectile){
 }
 
 void Player::Angle(SDL_Event event){
-    angle =  atan2(position_y - event.button.y, position_x - event.button.x) * 180.0 / M_PI - 90;
+    angle =  atan2(position_y - event.button.y, position_x - event.button.x) * 180.0 / M_PI - 180;
 }
 
 void Player::DecreaseHP(int value){
