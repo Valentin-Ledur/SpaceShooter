@@ -7,8 +7,8 @@
 
 #include <list>
 #include <string>
-#include <../include/SDL2/SDL.h>
-#include <../include/SDL2/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "../include/Player/Player.hpp"
 #include "../include/Enemy/Asteroid.hpp"
 

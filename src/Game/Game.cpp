@@ -4,8 +4,8 @@
 #include <ctime>
 #include <random>
 #include <cmath>
-#include <../include/SDL2/SDL.h>
-#include "../include/SDL2/SDL_ttf.h"
+#include <SDL2/SDL.h>
+#include "SDL2/SDL_ttf.h"
 #include "../include/Game/Game.hpp"
 #include "../include/Projectile/Projectile.hpp"
 #include "../include/Player/Player.hpp"

@@ -1,7 +1,7 @@
 #ifndef __ASTEROID__
 #define __ASTEROID__
 
-#include <../include/SDL2/SDL.h>
+#include <SDL2/SDL.h>
 
 class Asteroid
 {

@@ -1,7 +1,7 @@
 #ifndef __PROJECTILE__
 #define __PROJECTILE__
 
-#include <../include/SDL2/SDL.h>
+#include <SDL2/SDL.h>
 
 class Projectile
 {
