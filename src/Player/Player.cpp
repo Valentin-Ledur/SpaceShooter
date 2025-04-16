@@ -1,9 +1,9 @@
 #include <list>
 #include <cmath>
-#include "../include/Player/Player.hpp"
+#include "Player/Player.hpp"
 #include <include/SDL2/SDL.h>
 #include <include/SDL2/SDL_image.h>
-#include "../include/Projectile/Projectile.hpp"
+#include "Projectile/Projectile.hpp"
 
 double Player::getAngle(SDL_Event event){
     return 0.0;

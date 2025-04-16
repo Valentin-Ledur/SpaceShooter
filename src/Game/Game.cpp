@@ -6,10 +6,10 @@
 #include <cmath>
 #include <SDL2/SDL.h>
 #include "SDL2/SDL_ttf.h"
-#include "../include/Game/Game.hpp"
-#include "../include/Projectile/Projectile.hpp"
-#include "../include/Player/Player.hpp"
-#include "../include/Enemy/Asteroid.hpp"
+#include "Game/Game.hpp"
+#include "Projectile/Projectile.hpp"
+#include "Player/Player.hpp"
+#include "Enemy/Asteroid.hpp"
 
 SDL_Texture* Game::CreateTexture(std::string imagePath, SDL_Rect rect){
     SDL_Surface *imageSurface;
@@ -148,7 +148,7 @@ void Game::Update(){
 
     bool run = true;
     GameStatut statut = START;
-    SDL_Event event;
+    SDL_Event event = {};
     while(run){
         
         int start = SDL_GetTicks();
@@ -238,7 +238,8 @@ void Game::Display(){
 
 
 //Ajoute une zone de texte au rendu.
-void Game::AddTextToRenderer(SDL_Renderer *renderer, char* text, int fontSize, SDL_Rect textArea, char* fontPath, SDL_Color color){
+void Game::AddTextToRenderer(SDL_Renderer *renderer, const char* text, int fontSize, SDL_Rect textArea, const char* fontPath, SDL_Color color){
+
 
     //Initialisation de TTF.
     if (TTF_Init() != 0){
