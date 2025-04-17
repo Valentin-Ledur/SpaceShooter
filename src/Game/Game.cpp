@@ -144,82 +144,96 @@ GameStatut Game::HandleKey(SDL_Event event){
 
 void Game::Update(){
     int fps = 60;
-    int desiredDelta = 1000/fps;
+    int desiredDelta = 1000 / fps;
 
     bool run = true;
     GameStatut statut = START;
     SDL_Event event = {};
-    while(run){
-        
-        int start = SDL_GetTicks();
-        switch (statut){
-        case START:
-            statut = PLAY;
-            break;
 
-        case PLAY:
-            AddAsteroid();
-            statut = HandleKey(event);
-            for(std::list<Projectile>::iterator projectile = projectile_list.begin(); projectile != projectile_list.end(); projectile++){
-                projectile->Move();
-                for(std::list<Asteroid>::iterator asteroid = asteroid_list.begin(); asteroid != asteroid_list.end(); asteroid++){
-                    if(asteroid->IsInside(projectile->GetPositionX(), projectile->GetPositionY())){
-                        if (asteroid->GetSize() >= 2){
-                            asteroid_list.push_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
-                            asteroid_list.push_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
-                            asteroid_list.erase(asteroid);     
-                        }else{
-                            asteroid_list.erase(asteroid);
-                        }
-                        projectile_list.erase(projectile);
-                        score += __SCORE__ASTEROID__;
-                        continue;
-                    }
-                }
-                if(projectile->IsOutScreen(width, height)){
-                    projectile_list.erase(projectile);
-                }else{
-                    projectile->CopyInRenderer(projectile_texture, renderer);
-                }
-            }
-            for(std::list<Asteroid>::iterator asteroid = asteroid_list.begin(); asteroid != asteroid_list.end(); asteroid++){
-                asteroid->Move();
-                if (asteroid->IsOutScreen(width, height)){
-                    asteroid_list.erase(asteroid);
-                    continue;
-                }else if(asteroid->IsInside(player.GetPositionX(), player.GetPositionY())){
-                    player.DecreaseHP(1);
-                    asteroid_list.erase(asteroid);
-                    if (player.GetHP() <= 0){
-                        statut = STOP;
-                    }
-                    continue;
-                }else if(asteroid->GetSize() == 1){
-                    asteroid->CopyInRenderer(asteroid_texture_50, renderer);
-                }else if(asteroid->GetSize() == 2){
-                    asteroid->CopyInRenderer(asteroid_texture_100, renderer);
-                }else if(asteroid->GetSize() == 3){
-                    asteroid->CopyInRenderer(asteroid_texture_150, renderer);
-                }
-            }
-            player.Move(width, height);
-            player.CopyInRenderer(player_texture, renderer);
-            Display();
-            break;
-        case PAUSE:
-            
-            break;
-        case GAME_OVER:
-            break;
-        case STOP:
-            SDL_Quit();
-            run = false;
-        default:
-            break;
-        }
+    while (run) {
+        int start = SDL_GetTicks();
         
+        switch (statut) {
+            case START:
+                statut = PLAY;
+                break;
+
+            case PLAY:
+                AddAsteroid();
+                statut = HandleKey(event);
+
+                // Parcours de la liste des projectiles
+                for (auto projectile = projectile_list.begin(); projectile != projectile_list.end(); ) {
+                    projectile->Move();
+
+                    bool projectile_removed = false;
+                    for (auto asteroid = asteroid_list.begin(); asteroid != asteroid_list.end(); ) {
+                        if (asteroid->IsInside(projectile->GetPositionX(), projectile->GetPositionY())) {
+                            if (asteroid->GetSize() >= 2) {
+                                asteroid_list.emplace_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
+                                asteroid_list.emplace_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
+                            }
+                            asteroid = asteroid_list.erase(asteroid); // Met à jour l'itérateur
+                            projectile_removed = true;
+                            score += __SCORE__ASTEROID__;
+                            break; // Sortir de la boucle interne
+                        } else {
+                            ++asteroid;
+                        }
+                    }
+
+                    if (projectile_removed || projectile->IsOutScreen(width, height)) {
+                        projectile = projectile_list.erase(projectile); // Met à jour l'itérateur
+                    } else {
+                        projectile->CopyInRenderer(projectile_texture, renderer);
+                        ++projectile;
+                    }
+                }
+
+                // Parcours de la liste des astéroïdes
+                for (auto asteroid = asteroid_list.begin(); asteroid != asteroid_list.end(); ) {
+                    asteroid->Move();
+
+                    if (asteroid->IsOutScreen(width, height)) {
+                        asteroid = asteroid_list.erase(asteroid);
+                    } else if (asteroid->IsInside(player.GetPositionX(), player.GetPositionY())) {
+                        player.DecreaseHP(1);
+                        asteroid = asteroid_list.erase(asteroid);
+                        if (player.GetHP() <= 0) {
+                            statut = STOP;
+                        }
+                    } else {
+                        switch (asteroid->GetSize()) {
+                            case 1: asteroid->CopyInRenderer(asteroid_texture_50, renderer); break;
+                            case 2: asteroid->CopyInRenderer(asteroid_texture_100, renderer); break;
+                            case 3: asteroid->CopyInRenderer(asteroid_texture_150, renderer); break;
+                        }
+                        ++asteroid;
+                    }
+                }
+
+                player.Move(width, height);
+                player.CopyInRenderer(player_texture, renderer);
+                Display();
+                break;
+
+            case PAUSE:
+                break;
+
+            case GAME_OVER:
+                break;
+
+            case STOP:
+                SDL_Quit();
+                run = false;
+                break;
+
+            default:
+                break;
+        }
+
         int delta = SDL_GetTicks() - start;
-        if (delta < desiredDelta){
+        if (delta < desiredDelta) {
             SDL_Delay(desiredDelta - delta);
         }
     }
