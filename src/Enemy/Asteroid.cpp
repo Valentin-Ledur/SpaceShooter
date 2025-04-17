@@ -1,6 +1,6 @@
 #include <iostream>
-#include "../include/Enemy/Asteroid.hpp"
-#include "../include/Game/Game.hpp"
+#include "Enemy/Asteroid.hpp"
+#include "Game/Game.hpp"
 
 Asteroid::Asteroid(int width, int height){
     

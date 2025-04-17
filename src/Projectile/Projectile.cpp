@@ -1,6 +1,6 @@
 #include <iostream>
-#include <../include/SDL2/SDL.h>
-#include "../include/Projectile/Projectile.hpp"
+#include <SDL2/SDL.h>
+#include "Projectile/Projectile.hpp"
 
 Projectile::Projectile(float _position_x, float _position_y, float _direction_x, float _direction_y){
     position_x = _position_x;

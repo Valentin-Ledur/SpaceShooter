@@ -7,8 +7,8 @@
 
 #include <list>
 #include <string>
-#include <../include/SDL2/SDL.h>
-#include <../include/SDL2/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "../include/Player/Player.hpp"
 #include "../include/Enemy/Asteroid.hpp"
 
@@ -37,7 +37,8 @@ private:
     SDL_Texture *asteroid_texture_100;
     SDL_Texture *asteroid_texture_150;
     SDL_Texture* CreateTexture(std::string imagePath, SDL_Rect rect);
-    void AddTextToRenderer(SDL_Renderer *renderer, char* text, int fontSize, SDL_Rect textArea, char* fontPath, SDL_Color color);
+    void AddTextToRenderer(SDL_Renderer *renderer, const char* text, int fontSize, SDL_Rect textArea, const char* fontPath, SDL_Color color);
+
 
     //Test
 
