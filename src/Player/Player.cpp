@@ -1,8 +1,8 @@
 #include <list>
 #include <cmath>
 #include "Player/Player.hpp"
-#include <include/SDL2/SDL.h>
-#include <include/SDL2/SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "Projectile/Projectile.hpp"
 
 double Player::getAngle(SDL_Event event){

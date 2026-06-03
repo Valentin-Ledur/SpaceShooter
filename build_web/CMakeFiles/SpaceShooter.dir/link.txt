@@ -1,0 +1,1 @@
+C:\Users\valen\emsdk\upstream\emscripten\em++.bat -sUSE_SDL=2 -sUSE_SDL_IMAGE=2 "-sSDL2_IMAGE_FORMATS=['png']" -sUSE_SDL_TTF=2 --preload-file C:/Users/valen/Documents/SpaceShooter/data@data --preload-file C:/Users/valen/Documents/SpaceShooter/font@font @CMakeFiles\SpaceShooter.dir\objects1.rsp -o SpaceShooter.html

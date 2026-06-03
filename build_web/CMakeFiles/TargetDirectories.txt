@@ -1,0 +1,3 @@
+C:/Users/valen/Documents/SpaceShooter/build_web/CMakeFiles/SpaceShooter.dir
+C:/Users/valen/Documents/SpaceShooter/build_web/CMakeFiles/edit_cache.dir
+C:/Users/valen/Documents/SpaceShooter/build_web/CMakeFiles/rebuild_cache.dir

@@ -54,7 +54,11 @@ public:
     void AddAsteroid();
     GameStatut HandleKey(SDL_Event event);
     void Update();
+    void UpdateFrame();
     void Display();
+
+    bool run = true;
+    GameStatut statut = START;
 
 };
 #endif 
