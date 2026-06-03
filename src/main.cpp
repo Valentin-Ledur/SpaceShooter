@@ -15,7 +15,12 @@ void emscripten_main_loop()
 #endif
 
 //Windows : g++ src/main.cpp src/Player/*.cpp src/Projectile/*.cpp src/Enemy/*.cpp src/Game/*.cpp -o bin/main -Wall -I include -L lib -lm -lmingw32 -lSDL2main -lSDL2_image -lSDL2_ttf -lSDL2
-//Web emcmake cmake .. -DCMAKE_BUILD_TYPE=Release cmake build .
+//Web :
+// mkdir build_web
+// cd build_web
+//emcmake cmake .. -DCMAKE_BUILD_TYPE=Release 
+//cmake --build .
+
 int main(int argc, char *argv[]) {
     game = new Game();
 
