@@ -9,19 +9,29 @@
 #include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "../include/Player/Player.hpp"
-#include "../include/Enemy/Asteroid.hpp"
-
-typedef enum GameStatut{
-    START,
-    PLAY,
-    PAUSE,
-    GAME_OVER,
-    STOP
-}GameStatut;
+#include <SDL2/SDL_ttf.h>
+#include "Game/GameStatut.hpp"
+#include "UI/Menu/Menu.hpp"
+#include "Player/Player.hpp"
+#include "Enemy/Asteroid.hpp"
 
 class Game
 {
+public:
+    Game();
+    ~Game();
+
+    static int Random(int range_min, int range_max);
+
+    void AddAsteroid();
+    GameStatut HandleKey(SDL_Event event);
+    void Update();
+    void UpdateFrame();
+    void Display();
+
+    bool run = true;
+    GameStatut statut = START;
+
 private:
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -36,29 +46,20 @@ private:
     SDL_Texture *asteroid_texture_50;
     SDL_Texture *asteroid_texture_100;
     SDL_Texture *asteroid_texture_150;
-    SDL_Texture* CreateTexture(std::string imagePath, SDL_Rect rect);
-    void AddTextToRenderer(SDL_Renderer *renderer, const char* text, int fontSize, SDL_Rect textArea, const char* fontPath, SDL_Color color);
 
+    void UpdateEnemy();
+    void UpdateProjectile();
+    void UpdatePlayer();
+    void ResetGame();
 
-    //Test
+    // Menu
+    Menu start_menu;
+    Menu pause_menu;
+    Menu game_over_menu;
 
+    // Test
     unsigned int addNewAsteroid;
     unsigned int addMore;
     unsigned int timeNew;
-
-public:
-    Game();
-    ~Game();
-    static int Random(int range_min, int range_max);
-    
-    void AddAsteroid();
-    GameStatut HandleKey(SDL_Event event);
-    void Update();
-    void UpdateFrame();
-    void Display();
-
-    bool run = true;
-    GameStatut statut = START;
-
 };
-#endif 
+#endif

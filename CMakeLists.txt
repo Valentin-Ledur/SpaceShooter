@@ -13,13 +13,17 @@ endif()
 
 add_executable(SpaceShooter
     src/main.cpp
-    src/Enemy/Asteroid.cpp
+    src/Utils/Utils.cpp
+    src/UI/Button/Button.cpp
+    src/UI/TextArea/TextArea.cpp
+    src/UI/Menu/Menu.cpp
     src/Game/Game.cpp
-    src/Player/Player.cpp
+    src/Enemy/Asteroid.cpp
     src/Projectile/Projectile.cpp
+    src/Player/Player.cpp
 )
 
-target_compile_features(SpaceShooter PUBLIC cxx_std_11)
+target_compile_features(SpaceShooter PUBLIC cxx_std_17)
 
 target_include_directories(SpaceShooter PUBLIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
@@ -47,6 +51,16 @@ if (EMSCRIPTEN)
     )
 
 elseif(MSVC)
+    add_custom_command(TARGET SpaceShooter POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/data"
+            "$<TARGET_FILE_DIR:SpaceShooter>/data"
+            
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/font"
+            "$<TARGET_FILE_DIR:SpaceShooter>/font"
+    )
+
     target_include_directories(SpaceShooter PUBLIC
     "${CMAKE_PREFIX_PATH}/include"
     "${CMAKE_PREFIX_PATH}/include/SDL2"
