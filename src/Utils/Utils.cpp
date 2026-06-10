@@ -115,4 +115,16 @@ namespace Utils
 
         return imageTexture;
     }
+
+    int Random(int range_min, int range_max)
+    {
+        int r = ((double)rand() / RAND_MAX) * (range_max - range_min) + range_min;
+        return r;
+    }
+
+    bool IsOutScreen(int width, int height, SDL_Point point){
+    if(point.x < 0 || point.x > width || point.y < 0 || point.y > height)
+		return true;
+	return false;
+}
 }

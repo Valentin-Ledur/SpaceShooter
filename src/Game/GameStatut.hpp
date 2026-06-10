@@ -1,5 +1,6 @@
 #ifndef __GAME_STATUT__
 #define __GAME_STATUT__
+
 typedef enum GameStatut
 {
     START,
@@ -8,4 +9,5 @@ typedef enum GameStatut
     GAME_OVER,
     STOP
 } GameStatut;
+
 #endif

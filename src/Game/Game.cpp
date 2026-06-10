@@ -1,21 +1,21 @@
 #include <iostream>
 #include <list>
-#include <vector>
 #include <string>
-#include <ctime>
-#include <random>
-#include <cmath>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include "Utils/Utils.hpp"
-#include "UI/Button/Button.hpp"
-#include "UI/TextArea/TextArea.hpp"
-#include "UI/Menu/Menu.hpp"
+#include <SDL2/SDL_image.h>
+#include "defines.hpp"
 #include "Game/GameStatut.hpp"
+#include "UI/UIManager.hpp"
+#include "Projectile/ProjectileManager.hpp"
+#include "Player/PlayerManager.hpp"
+#include "Enemy/EnemyManager.hpp"
 #include "Game/Game.hpp"
-#include "Projectile/Projectile.hpp"
-#include "Player/Player.hpp"
-#include "Enemy/Asteroid.hpp"
+#include "Enemy/Asteroid/Asteroid.hpp"
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 Game::Game()
 {
@@ -46,420 +46,225 @@ Game::Game()
 
     SDL_GetWindowSize(window, &width, &height);
 
-    // Initialisation des textures.
-    SDL_Rect rectJoueur = {0, 0, 25, 25};
-    player_texture = Utils::CreateTexture(renderer, "data/Player.png", rectJoueur);
+    SDL_Point spawn = {int(width / 2.f), int(height / 2.f)};
 
-    SDL_Rect rectProjectile = {0, 0, 5, 5};
-    projectile_texture = Utils::CreateTexture(renderer, "data/projectile.png", rectProjectile);
-
-    SDL_Rect rectAsteroid50 = {0, 0, 50, 50};
-    asteroid_texture_50 = Utils::CreateTexture(renderer, "data/asteroid50.png", rectAsteroid50);
-
-    SDL_Rect rectAsteroid100 = {0, 0, 100, 100};
-    asteroid_texture_100 = Utils::CreateTexture(renderer, "data/asteroid100.png", rectAsteroid100);
-
-    SDL_Rect rectAsteroid150 = {0, 0, 150, 150};
-    asteroid_texture_150 = Utils::CreateTexture(renderer, "data/asteroid150.png", rectAsteroid150);
-
-    score = 0;
-    player = Player(width, height);
-    asteroid_list = std::list<Asteroid>();
-
-    addNewAsteroid = 0;
-    addMore = 1000;
-    timeNew = 500;
-
-    // Création des Menus
-
-    SDL_Color black = {0, 0, 0, 255};
-    SDL_Color dark_gray = {50, 50, 50, 255};
-    SDL_Color blue = {0, 100, 255, 255};
-    SDL_Color red = {200, 0, 0, 255};
-
-    // MENU START
-    TextArea title_start = TextArea(width / 2 - 200, height / 2 - 300, 400, 100, black, "SPACE SHOOTER", 40);
-    Button btn_play = Button(width / 2 - 150, height / 2 - 50, 300, 80, dark_gray, blue, "JOUER", 30, PLAY);
-    Button btn_quit_start = Button(width / 2 - 150, height / 2 + 100, 300, 80, dark_gray, red, "QUITTER", 30, STOP);
-    start_menu = Menu({btn_play, btn_quit_start}, {title_start}, black, START);
-
-    // MENU PAUSE
-    TextArea title_pause = TextArea(width / 2 - 150, height / 2 - 300, 300, 100, black, "PAUSE", 40);
-    Button btn_resume = Button(width / 2 - 150, height / 2 - 50, 300, 80, dark_gray, blue, "REPRENDRE", 30, PLAY);
-    Button btn_quit_pause = Button(width / 2 - 150, height / 2 + 100, 300, 80, dark_gray, red, "QUITTER", 30, STOP);
-    pause_menu = Menu({btn_resume, btn_quit_pause}, {title_pause}, black, PAUSE);
-
-    // MENU GAME OVER
-    TextArea title_gameover = TextArea(width / 2 - 200, height / 2 - 300, 400, 100, black, "GAME OVER", 40);
-    Button btn_restart = Button(width / 2 - 150, height / 2 - 50, 300, 80, dark_gray, blue, "MENU PRINCIPAL", 30, START);
-    Button btn_quit_go = Button(width / 2 - 150, height / 2 + 100, 300, 80, dark_gray, red, "QUITTER", 30, STOP);
-    game_over_menu = Menu({btn_restart, btn_quit_go}, {title_gameover}, black, GAME_OVER);
+    player_manager.Init(PLAYER_BASE_HP, spawn, PLAYER_RECT_TEXTURE, PLAYER_TEXTURE_PATH, renderer);
+    ui_manager.Init(width, height, &score, player_manager.GetPlayerHpPtr());
+    enemy_manager.Init(ASTEROID_RECT_50, ASTEROID_RECT_100, ASTEROID_RECT_150, ASTEROID_TEXTURE_50_PATH, ASTEROID_TEXTURE_100_PATH, ASTEROID_TEXTURE_150_PATH, renderer);
+    projectile_manager.Init(PROJECTILE_RECT_TEXTURE, PROJECTILE_TEXTURE_PATH, renderer);
 }
 
 Game::~Game()
 {
-    SDL_DestroyTexture(asteroid_texture_50);
-    SDL_DestroyTexture(asteroid_texture_100);
-    SDL_DestroyTexture(asteroid_texture_150);
-    SDL_DestroyTexture(projectile_texture);
-    SDL_DestroyTexture(player_texture);
+    player_manager.Clean();
+    enemy_manager.Clean();
+    projectile_manager.Clean();
 
-    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
 
     TTF_Quit();
     SDL_Quit();
 }
 
-// Genere un nombre aleatoire compris dans [range_min, range_max[.
-int Game::Random(int range_min, int range_max)
+void Game::HandleEvent(SDL_Event _event)
 {
-    int r = ((double)rand() / RAND_MAX) * (range_max - range_min) + range_min;
-    return r;
-}
-
-void Game::AddAsteroid()
-{
-    if (addNewAsteroid < SDL_GetTicks())
+    while (SDL_PollEvent(&_event))
     {
-        asteroid_list.push_back(Asteroid(width, height));
-        addNewAsteroid += timeNew;
-    }
-    if (addMore < SDL_GetTicks() && timeNew > 100)
-    {
-        timeNew -= 50;
-        addMore += 1000;
-    }
-}
-
-GameStatut Game::HandleKey(SDL_Event event)
-{
-    switch (statut)
-    {
-    case START:
-        while (SDL_PollEvent(&event))
+        switch (statut)
         {
-            if (event.type == SDL_MOUSEBUTTONDOWN)
-            {
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                GameStatut action = start_menu.CheckButton(x, y);
-                if (action == PLAY)
-                    ResetGame();
-                return action;
-            }
-        }
-        return START;
-
-    case PLAY:
-        while (SDL_PollEvent(&event))
+        case START:
         {
-            if (event.type == SDL_KEYDOWN)
-            {
-                if (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_p)
-                    return PAUSE;
-                if (event.key.keysym.sym == SDLK_m)
-                    return STOP;
-
-                player.HandleKey(event);
-            }
-            else if (event.type == SDL_KEYUP)
-            {
-                player.KeyRelease(event);
-            }
-            else if (event.type == SDL_MOUSEBUTTONDOWN)
-            {
-                float position_x = player.GetPositionX();
-                float position_y = player.GetPositionY();
-                float direction_x = event.button.x - player.GetPositionX();
-                float direction_y = event.button.y - player.GetPositionY();
-                float norme = sqrtf(direction_x * direction_x + direction_y * direction_y);
-                direction_x /= norme;
-                direction_y /= norme;
-                projectile_list.push_back(Projectile(position_x, position_y, direction_x, direction_y));
-            }
-            else if (event.type == SDL_MOUSEMOTION)
-            {
-                player.Angle(event);
-            }
+            statut = ui_manager.HandleEvent(_event, statut);
         }
-        return PLAY;
+        break;
 
-    case PAUSE:
-        while (SDL_PollEvent(&event))
+        case PLAY:
         {
-            if (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_p))
-                return PLAY;
-
-            if (event.type == SDL_MOUSEBUTTONDOWN)
-            {
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                return pause_menu.CheckButton(x, y);
-            }
+            statut = ui_manager.HandleEvent(_event, statut);
+            player_manager.HandleEvent(_event, statut);
+            projectile_manager.HandleEvent(_event, *(player_manager.GetPlayerPositionPtr()), statut);
         }
-        return PAUSE;
+        break;
 
-    case GAME_OVER:
-        while (SDL_PollEvent(&event))
+        case PAUSE:
         {
-            if (event.type == SDL_MOUSEBUTTONDOWN)
-            {
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                return game_over_menu.CheckButton(x, y);
-            }
+            statut = ui_manager.HandleEvent(_event, statut);
         }
-        return GAME_OVER;
+        break;
 
-    case STOP:
-        run = false;
-        return STOP;
+        case GAME_OVER:
+        {
+            statut = ui_manager.HandleEvent(_event, statut);
+        }
+        break;
 
-    default:
-        return STOP;
+        case STOP:
+        {
+        }
+        break;
+        default:
+            break;
+        }
     }
 }
 
-void Game::UpdateProjectile()
+void Game::Update()
 {
-    for (auto projectile = projectile_list.begin(); projectile != projectile_list.end();)
-    {
-        projectile->Move();
+    ui_manager.Update(statut);
+    player_manager.Update(width, height);
+    enemy_manager.Update(width, height);
+    projectile_manager.Update(width, height);
+}
 
-        bool projectile_removed = false;
-        for (auto asteroid = asteroid_list.begin(); asteroid != asteroid_list.end();)
+void Game::Display()
+{
+    ui_manager.Display(renderer, statut);
+    player_manager.Display(renderer);
+    enemy_manager.Display(renderer);
+    projectile_manager.Display(renderer);
+}
+
+void Game::CheckCollision()
+{
+    auto *list_projectiles = projectile_manager.GetPlayerProjectilePtr();
+    auto *list_asteroids = enemy_manager.GetAsteroidListPtr();
+
+    for (auto p = list_projectiles->begin(); p != list_projectiles->end();)
+    {
+        bool projectile_detruit = false;
+
+        for (auto a = list_asteroids->begin(); a != list_asteroids->end();)
         {
-            if (asteroid->IsInside(projectile->GetPositionX(), projectile->GetPositionY()))
+            SDL_Rect asteroid_rect = {a->GetPosition()->x - 25 * a->GetSize(), a->GetPosition()->y - 25 * a->GetSize(), 50 * a->GetSize(), 50 * a->GetSize()};
+
+            if (SDL_PointInRect(p->GetPosition(), &asteroid_rect))
             {
-                if (asteroid->GetSize() >= 2)
-                {
-                    asteroid_list.emplace_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
-                    asteroid_list.emplace_back(Asteroid(asteroid->GetSize(), asteroid->GetPositionX(), asteroid->GetPositionY()));
-                }
-                asteroid = asteroid_list.erase(asteroid);
-                projectile_removed = true;
-                score += __SCORE__ASTEROID__;
+                score += ASTEROID_SCORE;
+                list_asteroids->emplace_back(Asteroid(a->GetSize() - 1, *(a->GetPosition())));
+                list_asteroids->emplace_back(Asteroid(a->GetSize() - 1, *(a->GetPosition())));
+
+                a = list_asteroids->erase(a);
+                projectile_detruit = true;
                 break;
             }
             else
             {
-                ++asteroid;
+                ++a;
             }
         }
 
-        if (projectile_removed || projectile->IsOutScreen(width, height))
+        if (projectile_detruit)
         {
-            projectile = projectile_list.erase(projectile);
+            p = list_projectiles->erase(p);
         }
         else
         {
-            projectile->CopyInRenderer(projectile_texture, renderer);
-            ++projectile;
+            ++p;
         }
     }
-}
 
-void Game::UpdateEnemy()
-{
-
-    // Parcours de la liste des astéroïdes
-    for (auto asteroid = asteroid_list.begin(); asteroid != asteroid_list.end();)
+    for (auto a = list_asteroids->begin(); a != list_asteroids->end();)
     {
-        asteroid->Move();
+        SDL_Rect asteroid_rect = {a->GetPosition()->x - 25 * a->GetSize(), a->GetPosition()->y - 25 * a->GetSize(), 50 * a->GetSize(), 50 * a->GetSize()};
 
-        if (asteroid->IsOutScreen(width, height))
+        if (SDL_PointInRect(player_manager.GetPlayerPositionPtr(), &asteroid_rect))
         {
-            asteroid = asteroid_list.erase(asteroid);
-        }
-        else if (asteroid->IsInside(player.GetPositionX(), player.GetPositionY()))
-        {
-            player.DecreaseHP(1);
-            asteroid = asteroid_list.erase(asteroid);
-            if (player.GetHP() <= 0)
+            int *hp = player_manager.GetPlayerHpPtr();
+            *hp = *hp - 1;
+
+            a = list_asteroids->erase(a);
+
+            if (*hp <= 0)
             {
                 statut = GAME_OVER;
             }
         }
         else
         {
-            switch (asteroid->GetSize())
-            {
-            case 1:
-                asteroid->CopyInRenderer(asteroid_texture_50, renderer);
-                break;
-            case 2:
-                asteroid->CopyInRenderer(asteroid_texture_100, renderer);
-                break;
-            case 3:
-                asteroid->CopyInRenderer(asteroid_texture_150, renderer);
-                break;
-            }
-            ++asteroid;
+            ++a;
         }
     }
 }
 
-void Game::UpdatePlayer()
-{
-    player.Move(width, height);
-    player.CopyInRenderer(player_texture, renderer);
-}
-
-void Game::ResetGame()
-{
-    asteroid_list.clear();
-    projectile_list.clear();
-
-    player = Player(width, height);
-
-    score = 0;
-
-    addNewAsteroid = SDL_GetTicks();
-    addMore = SDL_GetTicks() + 1000;
-    timeNew = 500;
-}
-
-void Game::Update()
+void Game::Run()
 {
     int fps = 60;
     int desiredDelta = 1000 / fps;
 
     SDL_Event event = {};
 
+#ifndef __EMSCRIPTEN__
     while (run)
     {
-        int start = SDL_GetTicks();
+#endif
+        unsigned int start = SDL_GetTicks();
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        statut = HandleKey(event);
+        HandleEvent(event);
 
         switch (statut)
         {
         case START:
-            break;
+        {
+            ui_manager.Update(statut);
+            ui_manager.Display(renderer, statut);
+        }
+        break;
 
         case PLAY:
         {
-            AddAsteroid();
+            ui_manager.Update(statut);
+            player_manager.Update(width, height);
+            enemy_manager.Update(width, height);
+            projectile_manager.Update(width, height);
 
-            UpdateProjectile();
-            UpdateEnemy();
-            UpdatePlayer();
+            CheckCollision();
+
+            ui_manager.Display(renderer, statut);
+            player_manager.Display(renderer);
+            enemy_manager.Display(renderer);
+            projectile_manager.Display(renderer);
         }
         break;
 
         case PAUSE:
-            break;
+        {
+            ui_manager.Update(statut);
+            ui_manager.Display(renderer, statut);
+        }
+        break;
 
         case GAME_OVER:
-            break;
+        {
+            projectile_manager.Reset();
+            enemy_manager.Reset();
+            player_manager.Reset();
+
+            ui_manager.Update(statut);
+            ui_manager.Display(renderer, statut);
+        }
+        break;
 
         case STOP:
+        {
             run = false;
-            break;
-
+        }
+        break;
         default:
             break;
         }
 
-        Display();
+        SDL_RenderPresent(renderer);
 
         int delta = SDL_GetTicks() - start;
         if (delta < desiredDelta)
         {
             SDL_Delay(desiredDelta - delta);
         }
+#ifndef __EMSCRIPTEN__
     }
-}
-
-void Game::UpdateFrame()
-{
-    SDL_Event event = {};
-
-    int start = SDL_GetTicks();
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-
-    statut = HandleKey(event);
-
-    switch (statut)
-    {
-    case START:
-        break;
-
-    case PLAY:
-    {
-        AddAsteroid();
-
-        UpdateProjectile();
-        UpdateEnemy();
-        UpdatePlayer();
-    }
-    break;
-
-    case PAUSE:
-        break;
-
-    case GAME_OVER:
-        break;
-
-    case STOP:
-        run = false;
-        break;
-
-    default:
-        break;
-    }
-
-    Display();
-}
-
-void Game::Display()
-{
-    switch (statut)
-    {
-    case START:
-    {
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-        start_menu.Update(renderer, x, y);
-    }
-    break;
-
-    case PLAY:
-    {
-        SDL_Rect HUD = {(int)(width - width * 0.05), 0, 40, 20};
-        SDL_Rect rectPv = {0, 0, 40, 20};
-        SDL_Color white = {255, 255, 255, 255};
-        Utils::AddTextToRenderer(renderer, std::to_string(score).data(), 15, HUD, NULL, white);
-        Utils::AddTextToRenderer(renderer, std::to_string(player.GetHP()).data(), 15, rectPv, NULL, white);
-    }
-    break;
-
-    case PAUSE:
-    {
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-        pause_menu.Update(renderer, x, y);
-    }
-    break;
-
-    case GAME_OVER:
-    {
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-        game_over_menu.Update(renderer, x, y);
-    }
-    break;
-
-    case STOP:
-        run = false;
-        return;
-    }
-
-    SDL_RenderPresent(renderer);
+#endif
 }

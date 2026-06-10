@@ -21,16 +21,24 @@ Menu::Menu(std::vector<Button> _list_button, std::vector<TextArea> _list_textAre
     statut_menu = _statut_menu;
 }
 
-void Menu::Update(SDL_Renderer *renderer, int x, int y)
+void Menu::Update()
+{
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+
+    for (auto &button : list_button)
+    {
+        button.IsInside(x, y);
+    }
+}
+
+void Menu::Display(SDL_Renderer *renderer)
 {
     for (auto &text_area : list_textArea)
         text_area.CopyInRenderer(renderer);
 
     for (auto &button : list_button)
-    {
-        button.IsInside(x, y);
         button.CopyInRenderer(renderer);
-    }
 }
 
 GameStatut Menu::CheckButton(int x, int y)
