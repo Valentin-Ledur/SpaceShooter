@@ -13,25 +13,33 @@ private:
     Player player = Player();
     SDL_Point start_position = BASE_POINT;
     SDL_Rect texture_rectangle = BASE_RECT;
-    SDL_Texture *texture = NULL;
+
+    SDL_Texture *idle_texture_1 = NULL;
+    SDL_Texture *idle_texture_2 = NULL;
+    SDL_Texture *idle_texture_3 = NULL;
+
+    SDL_Texture *active_texture_1 = NULL;
+    SDL_Texture *active_texture_2 = NULL;
+
     double rotation = 0.0;
     bool up = false;
     bool down = false;
     bool right = false;
     bool left = false;
 
+    bool IsMoving();
     void MovePlayer(int _width, int _height);
 
 public:
     PlayerManager() {};
     ~PlayerManager() {};
 
-    void Init(int _hp, SDL_Point _position, SDL_Rect _texture_rectangle, std::string _texture_path, SDL_Renderer *_renderer);
+    void Init(int _hp, SDL_Point _position, SDL_Renderer *_renderer);
     void HandleEvent(SDL_Event _event, GameStatut _statut);
     void Update(int _width, int _height);
     void Display(SDL_Renderer *_renderer);
     void Reset();
-    void Clean() { SDL_DestroyTexture(texture); }
+    void Clean();
     int *GetPlayerHpPtr() { return player.GetHp(); }
     SDL_Point *GetPlayerPositionPtr() { return player.GetPosition(); }
 };

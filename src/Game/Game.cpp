@@ -48,7 +48,7 @@ Game::Game()
 
     SDL_Point spawn = {int(width / 2.f), int(height / 2.f)};
 
-    player_manager.Init(PLAYER_BASE_HP, spawn, PLAYER_RECT_TEXTURE, PLAYER_TEXTURE_PATH, renderer);
+    player_manager.Init(PLAYER_BASE_HP, spawn, renderer);
     ui_manager.Init(width, height, &score, player_manager.GetPlayerHpPtr());
     enemy_manager.Init(ASTEROID_RECT_50, ASTEROID_RECT_100, ASTEROID_RECT_150, ASTEROID_TEXTURE_50_PATH, ASTEROID_TEXTURE_100_PATH, ASTEROID_TEXTURE_150_PATH, renderer);
     projectile_manager.Init(PROJECTILE_RECT_TEXTURE, PROJECTILE_TEXTURE_PATH, renderer);

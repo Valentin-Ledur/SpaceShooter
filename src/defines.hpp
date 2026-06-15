@@ -25,8 +25,6 @@ const SDL_Rect ASTEROID_RECT_50 = {0, 0, 50, 50};
 const SDL_Rect ASTEROID_RECT_100 = {0, 0, 100, 100};
 const SDL_Rect ASTEROID_RECT_150 = {0, 0, 150, 150};
 
-// TEXTURE PATH
-const std::string PLAYER_TEXTURE_PATH = "data/player.png";
 const std::string PROJECTILE_TEXTURE_PATH = "data/projectile.png";
 const std::string ASTEROID_TEXTURE_50_PATH = "data/asteroid_50.png";
 const std::string ASTEROID_TEXTURE_100_PATH = "data/asteroid_100.png";
@@ -35,6 +33,19 @@ const std::string ASTEROID_TEXTURE_150_PATH = "data/asteroid_150.png";
 // PLAYER
 const int PLAYER_SPEED = 5;
 const int PLAYER_BASE_HP = 3;
+const int PLAYER_WIDTH = 75;
+const int PLAYER_HEIGHT = 75;
+
+const int PLAYER_IDLE_FRAME = 3;
+const int PLAYER_ACTIVE_FRAME = 2;
+const int PLAYER_ANIMATION_SPEED = 150;
+
+const std::string PLAYER_IDLE_1_TEXTURE_PATH = "data/player/player_idle_1.png";
+const std::string PLAYER_IDLE_2_TEXTURE_PATH = "data/player/player_idle_2.png";
+const std::string PLAYER_IDLE_3_TEXTURE_PATH = "data/player/player_idle_3.png";
+
+const std::string PLAYER_ACTIVE_1_TEXTURE_PATH = "data/player/player_active_1.png";
+const std::string PLAYER_ACTIVE_2_TEXTURE_PATH = "data/player/player_active_2.png";
 
 // PROJECTILE
 const int PROJECTILE_SIZE = 5;
@@ -42,5 +53,16 @@ const int PROJECTILE_SPEED = 15;
 
 // ASTEROID
 const int ASTEROID_SCORE = 20;
+const int ASTEROID_BASE_PIXEL_SIZE = 50;
+
+// rotation
+const std::string ASTEROID_BASIC_BASE_1_TEXTURE_PATH = "data/asteroid/asteroid_basic_base_1.png";
+const std::string ASTEROID_BASIC_BASE_2_TEXTURE_PATH = "data/asteroid/asteroid_basic_base_2.png";
+
+// animation
+const std::string ASTEROID_BASIC_1_TEXTURE_PATH = "data/asteroid/asteroid_basic_1.png";
+const std::string ASTEROID_BASIC_2_TEXTURE_PATH = "data/asteroid/asteroid_basic_2.png";
+const std::string ASTEROID_BASIC_3_TEXTURE_PATH = "data/asteroid/asteroid_basic_3.png";
+const std::string ASTEROID_BASIC_4_TEXTURE_PATH = "data/asteroid/asteroid_basic_4.png";
 
 #endif

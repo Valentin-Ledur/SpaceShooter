@@ -8,12 +8,23 @@
 #include "Player/Player.hpp"
 #include "Player/PlayerManager.hpp"
 
-void PlayerManager::Init(int _hp, SDL_Point _position, SDL_Rect _texture_rectangle, std::string _texture_path, SDL_Renderer *_renderer)
+void PlayerManager::Init(int _hp, SDL_Point _position, SDL_Renderer *_renderer)
 {
     player = Player(_hp, _position);
     start_position = _position;
-    texture_rectangle = _texture_rectangle;
-    texture = Utils::CreateTexture(_renderer, _texture_path, _texture_rectangle);
+    texture_rectangle = PLAYER_RECT_TEXTURE;
+
+    idle_texture_1 = Utils::CreateTexture(_renderer, PLAYER_IDLE_1_TEXTURE_PATH, texture_rectangle);
+    idle_texture_2 = Utils::CreateTexture(_renderer, PLAYER_IDLE_2_TEXTURE_PATH, texture_rectangle);
+    idle_texture_3 = Utils::CreateTexture(_renderer, PLAYER_IDLE_3_TEXTURE_PATH, texture_rectangle);
+
+    active_texture_1 = Utils::CreateTexture(_renderer, PLAYER_ACTIVE_1_TEXTURE_PATH, texture_rectangle);
+    active_texture_2 = Utils::CreateTexture(_renderer, PLAYER_ACTIVE_2_TEXTURE_PATH, texture_rectangle);
+}
+
+bool PlayerManager::IsMoving()
+{
+    return (up || down || right || left);
 }
 
 void PlayerManager::MovePlayer(int _width, int _height)
@@ -86,12 +97,66 @@ void PlayerManager::Update(int _width, int _height)
 void PlayerManager::Display(SDL_Renderer *_renderer)
 {
     SDL_Point *player_position = player.GetPosition();
-    SDL_Rect position = {player_position->x - 63, player_position->y - 13, 125, 25};
+    SDL_Rect position = {player_position->x - PLAYER_WIDTH / 2,
+                         player_position->y - PLAYER_HEIGHT / 2,
+                         PLAYER_WIDTH,
+                         PLAYER_HEIGHT};
 
-    if (SDL_RenderCopyEx(_renderer, texture, NULL, &position, rotation, NULL, SDL_FLIP_NONE))
+    if (IsMoving())
     {
-        SDL_Log("Erreur: chargement de la texture du joueur dans le rendu : %s\n", SDL_GetError());
+        int frame = (SDL_GetTicks() / PLAYER_ANIMATION_SPEED) % PLAYER_ACTIVE_FRAME;
+
+        switch (frame)
+        {
+        case 0:
+            if (SDL_RenderCopyEx(_renderer, active_texture_1, NULL, &position, rotation, NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du joueur dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        case 1:
+            if (SDL_RenderCopyEx(_renderer, active_texture_2, NULL, &position, rotation, NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du joueur dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
     }
+    else
+    {
+        int frame = (SDL_GetTicks() / PLAYER_ANIMATION_SPEED) % PLAYER_IDLE_FRAME;
+
+        switch (frame)
+        {
+        case 0:
+            if (SDL_RenderCopyEx(_renderer, idle_texture_1, NULL, &position, rotation, NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du joueur dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        case 1:
+            if (SDL_RenderCopyEx(_renderer, idle_texture_2, NULL, &position, rotation, NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du joueur dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        case 2:
+            if (SDL_RenderCopyEx(_renderer, idle_texture_3, NULL, &position, rotation, NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du joueur dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
+    }
+}
+void PlayerManager::Clean()
+{
+    SDL_DestroyTexture(idle_texture_1);
+    SDL_DestroyTexture(idle_texture_2);
+    SDL_DestroyTexture(idle_texture_3);
+
+    SDL_DestroyTexture(active_texture_1);
+    SDL_DestroyTexture(active_texture_2);
 }
 
 void PlayerManager::Reset()
