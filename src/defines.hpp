@@ -18,17 +18,7 @@ const SDL_Color BLUE = {0, 0, 255, 255};
 const SDL_Color DARK_GRAY = {50, 50, 50, 255};
 const SDL_Color TRANSPARENT = {0, 0, 0, 0};
 
-// TEXTURE RECTANGLE
-const SDL_Rect PLAYER_RECT_TEXTURE = {0, 0, 25, 25};
-const SDL_Rect PROJECTILE_RECT_TEXTURE = {0, 0, 5, 5};
-const SDL_Rect ASTEROID_RECT_50 = {0, 0, 50, 50};
-const SDL_Rect ASTEROID_RECT_100 = {0, 0, 100, 100};
-const SDL_Rect ASTEROID_RECT_150 = {0, 0, 150, 150};
-
 const std::string PROJECTILE_TEXTURE_PATH = "data/projectile.png";
-const std::string ASTEROID_TEXTURE_50_PATH = "data/asteroid_50.png";
-const std::string ASTEROID_TEXTURE_100_PATH = "data/asteroid_100.png";
-const std::string ASTEROID_TEXTURE_150_PATH = "data/asteroid_150.png";
 
 // PLAYER
 const int PLAYER_SPEED = 5;
@@ -65,4 +55,10 @@ const std::string ASTEROID_BASIC_2_TEXTURE_PATH = "data/asteroid/asteroid_basic_
 const std::string ASTEROID_BASIC_3_TEXTURE_PATH = "data/asteroid/asteroid_basic_3.png";
 const std::string ASTEROID_BASIC_4_TEXTURE_PATH = "data/asteroid/asteroid_basic_4.png";
 
+// TEXTURE RECTANGLE
+const SDL_Rect PLAYER_RECT_TEXTURE = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
+const SDL_Rect PROJECTILE_RECT_TEXTURE = {0, 0, 5, 5};
+const SDL_Rect ASTEROID_RECT_50 = {0, 0, 50, 50};
+const SDL_Rect ASTEROID_RECT_100 = {0, 0, 100, 100};
+const SDL_Rect ASTEROID_RECT_150 = {0, 0, 150, 150};
 #endif

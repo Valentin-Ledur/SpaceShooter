@@ -5,9 +5,7 @@
 #include "Enemy/Asteroid/Asteroid.hpp"
 #include "Enemy/EnemyManager.hpp"
 
-void EnemyManager::Init(SDL_Rect _texture_50_rectangle, SDL_Rect _texture_100_rectangle,
-                           SDL_Rect _texture_150_rectangle, std::string _texture_50_path,
-                           std::string _texture_100_path, std::string _texture_150_path, SDL_Renderer *_renderer)
+void EnemyManager::Init(SDL_Renderer *_renderer)
 {
     texture_rectangle_50 = _texture_50_rectangle;
     texture_rectangle_100 = _texture_100_rectangle;

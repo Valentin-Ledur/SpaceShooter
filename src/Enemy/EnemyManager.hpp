@@ -27,9 +27,7 @@ public:
     EnemyManager() {};
     ~EnemyManager() {};
 
-    void Init(SDL_Rect _texture_50_rectangle, SDL_Rect _texture_100_rectangle,
-              SDL_Rect _texture_150_rectangle, std::string _texture_50_path,
-              std::string _texture_100_path, std::string _texture_150_path, SDL_Renderer *_renderer);
+    void Init(SDL_Renderer *_renderer);
     void Update(int _width, int _height);
     void Display(SDL_Renderer *_renderer);
     void Reset();
