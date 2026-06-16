@@ -3,32 +3,96 @@
 #include "Utils/Utils.hpp"
 #include "defines.hpp"
 #include "Enemy/Asteroid/Asteroid.hpp"
+#include "Enemy/Asteroid/AsteroidType.hpp"
 #include "Enemy/EnemyManager.hpp"
 
 void EnemyManager::Init(SDL_Renderer *_renderer)
 {
-    texture_rectangle_50 = _texture_50_rectangle;
-    texture_rectangle_100 = _texture_100_rectangle;
-    texture_rectangle_150 = _texture_150_rectangle;
+    texture_rectangle_50 = ASTEROID_RECT_50;
+    texture_rectangle_100 = ASTEROID_RECT_100;
+    texture_rectangle_150 = ASTEROID_RECT_150;
 
-    texture_50 = Utils::CreateTexture(_renderer, _texture_50_path, _texture_50_rectangle);
-    texture_100 = Utils::CreateTexture(_renderer, _texture_100_path, _texture_100_rectangle);
-    texture_150 = Utils::CreateTexture(_renderer, _texture_150_path, _texture_150_rectangle);
+    // Basic
+    texture_basic_base_1_100 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_BASE_1_TEXTURE_PATH, texture_rectangle_100);
+    texture_basic_base_1_150 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_BASE_1_TEXTURE_PATH, texture_rectangle_150);
+
+    texture_basic_base_2_100 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_BASE_2_TEXTURE_PATH, texture_rectangle_100);
+    texture_basic_base_2_150 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_BASE_2_TEXTURE_PATH, texture_rectangle_150);
+
+    texture_basic_1_50 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_1_TEXTURE_PATH, texture_rectangle_50);
+    texture_basic_2_50 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_2_TEXTURE_PATH, texture_rectangle_50);
+    texture_basic_3_50 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_3_TEXTURE_PATH, texture_rectangle_50);
+    texture_basic_4_50 = Utils::CreateTexture(_renderer, ASTEROID_BASIC_4_TEXTURE_PATH, texture_rectangle_50);
+
+    // Brown
+    texture_brown_base_1_100 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_BASE_1_TEXTURE_PATH, texture_rectangle_100);
+    texture_brown_base_1_150 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_BASE_1_TEXTURE_PATH, texture_rectangle_150);
+
+    texture_brown_base_2_100 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_BASE_2_TEXTURE_PATH, texture_rectangle_100);
+    texture_brown_base_2_150 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_BASE_2_TEXTURE_PATH, texture_rectangle_150);
+
+    texture_brown_1_50 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_1_TEXTURE_PATH, texture_rectangle_50);
+    texture_brown_2_50 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_2_TEXTURE_PATH, texture_rectangle_50);
+    texture_brown_3_50 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_3_TEXTURE_PATH, texture_rectangle_50);
+    texture_brown_4_50 = Utils::CreateTexture(_renderer, ASTEROID_BROWN_4_TEXTURE_PATH, texture_rectangle_50);
+
+    // Ice
+    texture_ice_base_1_100 = Utils::CreateTexture(_renderer, ASTEROID_ICE_BASE_1_TEXTURE_PATH, texture_rectangle_100);
+    texture_ice_base_1_150 = Utils::CreateTexture(_renderer, ASTEROID_ICE_BASE_1_TEXTURE_PATH, texture_rectangle_150);
+
+    texture_ice_base_2_100 = Utils::CreateTexture(_renderer, ASTEROID_ICE_BASE_2_TEXTURE_PATH, texture_rectangle_100);
+    texture_ice_base_2_150 = Utils::CreateTexture(_renderer, ASTEROID_ICE_BASE_2_TEXTURE_PATH, texture_rectangle_150);
+
+    texture_ice_1_50 = Utils::CreateTexture(_renderer, ASTEROID_ICE_1_TEXTURE_PATH, texture_rectangle_50);
+    texture_ice_2_50 = Utils::CreateTexture(_renderer, ASTEROID_ICE_2_TEXTURE_PATH, texture_rectangle_50);
+    texture_ice_3_50 = Utils::CreateTexture(_renderer, ASTEROID_ICE_3_TEXTURE_PATH, texture_rectangle_50);
+    texture_ice_4_50 = Utils::CreateTexture(_renderer, ASTEROID_ICE_4_TEXTURE_PATH, texture_rectangle_50);
 }
 
 void EnemyManager::Clean()
 {
-    SDL_DestroyTexture(texture_50);
-    SDL_DestroyTexture(texture_100);
-    SDL_DestroyTexture(texture_150);
+    // Basic
+    SDL_DestroyTexture(texture_basic_base_1_100);
+    SDL_DestroyTexture(texture_basic_base_1_150);
+
+    SDL_DestroyTexture(texture_basic_base_2_100);
+    SDL_DestroyTexture(texture_basic_base_2_150);
+
+    SDL_DestroyTexture(texture_basic_1_50);
+    SDL_DestroyTexture(texture_basic_2_50);
+    SDL_DestroyTexture(texture_basic_3_50);
+    SDL_DestroyTexture(texture_basic_4_50);
+
+    // Brown
+    SDL_DestroyTexture(texture_brown_base_1_100);
+    SDL_DestroyTexture(texture_brown_base_1_150);
+
+    SDL_DestroyTexture(texture_brown_base_2_100);
+    SDL_DestroyTexture(texture_brown_base_2_150);
+
+    SDL_DestroyTexture(texture_brown_1_50);
+    SDL_DestroyTexture(texture_brown_2_50);
+    SDL_DestroyTexture(texture_brown_3_50);
+    SDL_DestroyTexture(texture_brown_4_50);
+
+    // Ice
+    SDL_DestroyTexture(texture_ice_base_1_100);
+    SDL_DestroyTexture(texture_ice_base_1_150);
+
+    SDL_DestroyTexture(texture_ice_base_2_100);
+    SDL_DestroyTexture(texture_ice_base_2_150);
+
+    SDL_DestroyTexture(texture_ice_1_50);
+    SDL_DestroyTexture(texture_ice_2_50);
+    SDL_DestroyTexture(texture_ice_3_50);
+    SDL_DestroyTexture(texture_ice_4_50);
 }
 
 void EnemyManager::Update(int _width, int _height)
 {
     for (auto a = asteroid_list.begin(); a != asteroid_list.end();)
     {
-        a->GetPosition()->x += a->GetDirection()->x;
-        a->GetPosition()->y += a->GetDirection()->y;
+        a->Move();
 
         if (Utils::IsOutScreen(_width, _height, *a->GetPosition()))
         {
@@ -52,31 +116,187 @@ void EnemyManager::Update(int _width, int _height)
     }
 }
 
+void EnemyManager::DisplayBaseAsteroid(Asteroid _a, SDL_Renderer *_renderer, AsteroidType _type)
+{
+    SDL_Rect position = {_a.GetPosition()->x - 25 * _a.GetSize(), _a.GetPosition()->y - 25 * _a.GetSize(), 50 * _a.GetSize(), 50 * _a.GetSize()};
+
+    if (_a.GetSize() == 3)
+    {
+        switch (_type)
+        {
+        case BASIC:
+            if (SDL_RenderCopyEx(_renderer, texture_basic_base_1_150, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        case BROWN:
+            if (SDL_RenderCopyEx(_renderer, texture_brown_base_1_150, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        default:
+            if (SDL_RenderCopyEx(_renderer, texture_ice_base_1_150, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
+    }
+    else
+    {
+        switch (_type)
+        {
+        case BASIC:
+            if (SDL_RenderCopyEx(_renderer, texture_basic_base_1_100, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        case BROWN:
+            if (SDL_RenderCopyEx(_renderer, texture_brown_base_1_100, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        default:
+            if (SDL_RenderCopyEx(_renderer, texture_ice_base_1_100, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
+    }
+}
+
+void EnemyManager::DisplayAsteroidWithTrail(Asteroid _a, SDL_Renderer *_renderer, AsteroidType _type)
+{
+    int frame = (SDL_GetTicks() / ASTEROID_ANIMATION_SPEED) % ASTEROID_BASIC_FRAME;
+    SDL_Rect position = {_a.GetPosition()->x - 25 * _a.GetSize(), _a.GetPosition()->y - 25 * _a.GetSize(), 50 * _a.GetSize(), 50 * _a.GetSize()};
+
+    switch (frame)
+    {
+    case 0:
+        switch (_type)
+        {
+        case BASIC_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_basic_1_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        case BROWN_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_brown_1_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        default:
+            if (SDL_RenderCopyEx(_renderer, texture_ice_1_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
+        break;
+    case 1:
+        switch (_type)
+        {
+        case BASIC_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_basic_2_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        case BROWN_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_brown_2_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        default:
+            if (SDL_RenderCopyEx(_renderer, texture_ice_2_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
+        break;
+    case 2:
+        switch (_type)
+        {
+        case BASIC_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_basic_3_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        case BROWN_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_brown_3_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        default:
+            if (SDL_RenderCopyEx(_renderer, texture_ice_3_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
+        break;
+    default:
+        switch (_type)
+        {
+        case BASIC_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_basic_4_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+        case BROWN_TRAIL:
+            if (SDL_RenderCopyEx(_renderer, texture_brown_4_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+
+       default:
+            if (SDL_RenderCopyEx(_renderer, texture_ice_4_50, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            {
+                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+            }
+            break;
+        }
+        break;
+    }
+}
+
 void EnemyManager::Display(SDL_Renderer *_renderer)
 {
     for (auto a : asteroid_list)
     {
         SDL_Rect position = {a.GetPosition()->x - 25 * a.GetSize(), a.GetPosition()->y - 25 * a.GetSize(), 50 * a.GetSize(), 50 * a.GetSize()};
-        switch (a.GetSize())
+
+        if (a.GetType() == BASIC || a.GetType() == BROWN || a.GetType() == ICE)
         {
-        case 1:
-            if (SDL_RenderCopy(_renderer, texture_50, NULL, &position))
-            {
-                SDL_Log("Erreur: chargement de l'image de l'Asteroid dans le rendu : %s\n", SDL_GetError());
-            }
-            break;
-        case 2:
-            if (SDL_RenderCopy(_renderer, texture_100, NULL, &position))
-            {
-                SDL_Log("Erreur: chargement de l'image de l'Asteroid dans le rendu : %s\n", SDL_GetError());
-            }
-            break;
-        case 3:
-            if (SDL_RenderCopy(_renderer, texture_150, NULL, &position))
-            {
-                SDL_Log("Erreur: chargement de l'image de l'Asteroid dans le rendu : %s\n", SDL_GetError());
-            }
-            break;
+            DisplayBaseAsteroid(a, _renderer, a.GetType());
+        }
+        else
+        {
+            DisplayAsteroidWithTrail(a, _renderer, a.GetType());
         }
     }
 }
@@ -84,7 +304,7 @@ void EnemyManager::Display(SDL_Renderer *_renderer)
 void EnemyManager::Reset()
 {
     // A changer
-    addNewAsteroid = 0;
+    addNewAsteroid = (int) SDL_GetTicks();
     addMore = 1000;
     timeNew = 500;
     asteroid_list.clear();

@@ -45,6 +45,7 @@ if (EMSCRIPTEN)
         "-sUSE_SDL_IMAGE=2"
         "-sSDL2_IMAGE_FORMATS=['png']"
         "-sUSE_SDL_TTF=2"
+        "-sALLOW_MEMORY_GROWTH=1"
         "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/data@data"
         "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/font@font"
     )

@@ -163,4 +163,9 @@ void PlayerManager::Reset()
 {
     *(player.GetHp()) = PLAYER_BASE_HP;
     *(player.GetPosition()) = start_position;
+    
+    up = false;
+    down = false;
+    right = false;
+    left = false;
 }

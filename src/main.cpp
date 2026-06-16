@@ -9,7 +9,11 @@ void emscripten_main_loop()
     if (game->IsRunning())
         game->Run();
     else
+    {
         emscripten_cancel_main_loop();
+        EM_ASM(
+            window.close(););
+    }
 }
 
 #endif
@@ -27,8 +31,8 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-//Web :
-// mkdir build_web
-// cd build_web
-//emcmake cmake .. -DCMAKE_BUILD_TYPE=Release 
-//cmake --build .
+// Web :
+//  mkdir build_web
+//  cd build_web
+// emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
+// cmake --build .

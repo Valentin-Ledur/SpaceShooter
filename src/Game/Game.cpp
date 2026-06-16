@@ -46,11 +46,15 @@ Game::Game()
 
     SDL_GetWindowSize(window, &width, &height);
 
+    rect_background = {0, 0, width, height};
+
+    play_background = Utils::CreateTexture(renderer, PLAY_BACKGROUND_TEXTURE_PATH, rect_background);
+
     SDL_Point spawn = {int(width / 2.f), int(height / 2.f)};
 
     player_manager.Init(PLAYER_BASE_HP, spawn, renderer);
     ui_manager.Init(width, height, &score, player_manager.GetPlayerHpPtr());
-    enemy_manager.Init(ASTEROID_RECT_50, ASTEROID_RECT_100, ASTEROID_RECT_150, ASTEROID_TEXTURE_50_PATH, ASTEROID_TEXTURE_100_PATH, ASTEROID_TEXTURE_150_PATH, renderer);
+    enemy_manager.Init(renderer);
     projectile_manager.Init(PROJECTILE_RECT_TEXTURE, PROJECTILE_TEXTURE_PATH, renderer);
 }
 
@@ -141,8 +145,11 @@ void Game::CheckCollision()
             if (SDL_PointInRect(p->GetPosition(), &asteroid_rect))
             {
                 score += ASTEROID_SCORE;
-                list_asteroids->emplace_back(Asteroid(a->GetSize() - 1, *(a->GetPosition())));
-                list_asteroids->emplace_back(Asteroid(a->GetSize() - 1, *(a->GetPosition())));
+                if (a->GetSize() > 1)
+                {
+                    list_asteroids->emplace_back(Asteroid(a->GetSize(), *(a->GetPosition()), a->GetType()));
+                    list_asteroids->emplace_back(Asteroid(a->GetSize(), *(a->GetPosition()), a->GetType()));
+                }
 
                 a = list_asteroids->erase(a);
                 projectile_detruit = true;
@@ -216,6 +223,9 @@ void Game::Run()
 
         case PLAY:
         {
+            SDL_Rect screen_rect = {0, 0, width, height};
+            SDL_RenderCopy(renderer, play_background, NULL, &screen_rect);
+
             ui_manager.Update(statut);
             player_manager.Update(width, height);
             enemy_manager.Update(width, height);
@@ -242,6 +252,7 @@ void Game::Run()
             projectile_manager.Reset();
             enemy_manager.Reset();
             player_manager.Reset();
+            score = 0;
 
             ui_manager.Update(statut);
             ui_manager.Display(renderer, statut);

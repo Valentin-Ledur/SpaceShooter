@@ -22,6 +22,9 @@ private:
     SDL_Window *window = NULL;
     GameStatut statut = START;
 
+    SDL_Rect rect_background = {0, 0, 0, 0};
+    SDL_Texture *play_background = NULL;
+
     UIManager ui_manager;
     ProjectileManager projectile_manager;
     PlayerManager player_manager;
