@@ -7,10 +7,13 @@
 #include "Projectile/Projectile.hpp"
 #include "Projectile/ProjectileManager.hpp"
 
-void ProjectileManager::Init(SDL_Rect _texture_rectangle, std::string _texture_path, SDL_Renderer *_renderer)
+void ProjectileManager::Init(SDL_Renderer *_renderer)
 {
-    texture_rectangle = _texture_rectangle;
-    texture = Utils::CreateTexture(_renderer, _texture_path, _texture_rectangle);
+    texture_rectangle = PROJECTILE_RECT_TEXTURE;
+    projectile = Animation({PROJECTILE_1_TEXTURE_PATH, PROJECTILE_2_TEXTURE_PATH, PROJECTILE_3_TEXTURE_PATH},
+                           PROJECTILE_ANIMATION_SPEED,
+                           texture_rectangle,
+                           _renderer);
 }
 
 void ProjectileManager::HandleEvent(SDL_Event _event, SDL_Point _position, GameStatut _statut)
@@ -31,7 +34,10 @@ void ProjectileManager::HandleEvent(SDL_Event _event, SDL_Point _position, GameS
                 projectile_direction.x = (dir_x / norme) * PROJECTILE_SPEED;
                 projectile_direction.y = (dir_y / norme) * PROJECTILE_SPEED;
             }
-            player_projectile.push_back(Projectile(_position, projectile_direction));
+
+            double angle = atan2(dir_y, dir_x) * 180.0 / M_PI;
+
+            player_projectile.push_back(Projectile(_position, projectile_direction, angle));
         }
     }
 }
@@ -54,16 +60,11 @@ void ProjectileManager::Update(int _width, int _height)
     }
 }
 
-void ProjectileManager::Display(SDL_Renderer *renderer)
+void ProjectileManager::Display(SDL_Renderer *_renderer)
 {
     for (auto p : player_projectile)
     {
-        SDL_Rect position = {p.GetPosition()->x, p.GetPosition()->y, PROJECTILE_SIZE, PROJECTILE_SIZE};
-
-        if (SDL_RenderCopy(renderer, texture, NULL, &position))
-        {
-            SDL_Log("Erreur: chargement de la texture du projectile dans le rendu : %s\n", SDL_GetError());
-        }
+        projectile.DisplayWithRotation(_renderer, *(p.GetPosition()), p.GetAngle());
     }
 }
 

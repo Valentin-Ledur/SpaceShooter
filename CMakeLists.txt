@@ -20,6 +20,7 @@ add_executable(SpaceShooter
     src/UI/Menu/Menu.cpp
     src/UI/TextArea/TextArea.cpp
     src/UI/UIManager.cpp
+    src/Animation/Animation.cpp
 )
 
 target_compile_features(SpaceShooter PUBLIC cxx_std_17)

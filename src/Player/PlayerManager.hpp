@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include "defines.hpp"
 #include "Game/GameStatut.hpp"
+#include "Animation/Animation.hpp"
 #include "Player/Player.hpp"
 
 class PlayerManager
@@ -13,13 +14,9 @@ private:
     Player player = Player();
     SDL_Point start_position = BASE_POINT;
     SDL_Rect texture_rectangle = BASE_RECT;
-
-    SDL_Texture *idle_texture_1 = NULL;
-    SDL_Texture *idle_texture_2 = NULL;
-    SDL_Texture *idle_texture_3 = NULL;
-
-    SDL_Texture *active_texture_1 = NULL;
-    SDL_Texture *active_texture_2 = NULL;
+    
+    Animation idle;
+    Animation active;
 
     double rotation = 0.0;
     bool up = false;

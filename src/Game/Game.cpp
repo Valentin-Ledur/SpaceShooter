@@ -55,7 +55,7 @@ Game::Game()
     player_manager.Init(PLAYER_BASE_HP, spawn, renderer);
     ui_manager.Init(width, height, &score, player_manager.GetPlayerHpPtr());
     enemy_manager.Init(renderer);
-    projectile_manager.Init(PROJECTILE_RECT_TEXTURE, PROJECTILE_TEXTURE_PATH, renderer);
+    projectile_manager.Init(renderer);
 }
 
 Game::~Game()

@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include "defines.hpp"
 #include "Game/GameStatut.hpp"
+#include "Animation/Animation.hpp"
 #include "Projectile/Projectile.hpp"
 
 class ProjectileManager
@@ -13,18 +14,18 @@ class ProjectileManager
 private:
     std::list<Projectile> player_projectile = std::list<Projectile>();
     SDL_Rect texture_rectangle = BASE_RECT;
-    SDL_Texture *texture = NULL;
+    Animation projectile;
 
 public:
     ProjectileManager() {};
     ~ProjectileManager() {};
 
-    void Init(SDL_Rect _texture_rectangle, std::string _texture_path, SDL_Renderer *_renderer);
+    void Init(SDL_Renderer *_renderer);
     void HandleEvent(SDL_Event _event, SDL_Point _position, GameStatut _statut);
     void Update(int _width, int _height);
-    void Display(SDL_Renderer *renderer);
+    void Display(SDL_Renderer *_renderer);
     void Reset();
-    void Clean(){ SDL_DestroyTexture(texture); }
+    void Clean(){ projectile.Clean(); }
     std::list<Projectile> *GetPlayerProjectilePtr() { return &player_projectile; }
 };
 

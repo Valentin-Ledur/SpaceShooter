@@ -5,6 +5,7 @@
 #include <string>
 #include "Utils/Utils.hpp"
 #include "defines.hpp"
+#include "Animation/Animation.hpp"
 #include "Enemy/Asteroid/Asteroid.hpp"
 
 class EnemyManager
@@ -22,10 +23,7 @@ private:
     SDL_Texture *texture_basic_base_2_100 = NULL;
     SDL_Texture *texture_basic_base_2_150 = NULL;
 
-    SDL_Texture *texture_basic_1_50 = NULL;
-    SDL_Texture *texture_basic_2_50 = NULL;
-    SDL_Texture *texture_basic_3_50 = NULL;
-    SDL_Texture *texture_basic_4_50 = NULL;
+    Animation basic_trail;
 
     // Brown
 
@@ -34,11 +32,8 @@ private:
 
     SDL_Texture *texture_brown_base_2_100 = NULL;
     SDL_Texture *texture_brown_base_2_150 = NULL;
-
-    SDL_Texture *texture_brown_1_50 = NULL;
-    SDL_Texture *texture_brown_2_50 = NULL;
-    SDL_Texture *texture_brown_3_50 = NULL;
-    SDL_Texture *texture_brown_4_50 = NULL;
+    
+    Animation brown_trail;
 
     // Ice
 
@@ -48,10 +43,7 @@ private:
     SDL_Texture *texture_ice_base_2_100 = NULL;
     SDL_Texture *texture_ice_base_2_150 = NULL;
 
-    SDL_Texture *texture_ice_1_50 = NULL;
-    SDL_Texture *texture_ice_2_50 = NULL;
-    SDL_Texture *texture_ice_3_50 = NULL;
-    SDL_Texture *texture_ice_4_50 = NULL;
+    Animation ice_trail;
 
     // A changer
     int addNewAsteroid = 0;

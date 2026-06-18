@@ -1,3 +1,6 @@
+#ifndef __ANIMATION__
+#define __ANIMATION__
+
 #include <vector>
 #include <string>
 #include <SDL2/SDL.h>
@@ -19,3 +22,5 @@ public:
     void DisplayWithRotation(SDL_Renderer *_renderer, SDL_Point _position, double _angle);
     void Clean();
 };
+
+#endif

@@ -18,8 +18,6 @@ const SDL_Color BLUE = {0, 0, 255, 255};
 const SDL_Color DARK_GRAY = {50, 50, 50, 255};
 const SDL_Color TRANSPARENT = {0, 0, 0, 0};
 
-const std::string PROJECTILE_TEXTURE_PATH = "data/projectile.png";
-
 // Background
 const std::string PLAY_BACKGROUND_TEXTURE_PATH = "data/game/background_Play.png";
 
@@ -42,9 +40,16 @@ const std::string PLAYER_ACTIVE_1_TEXTURE_PATH = "data/player/player_active_1.pn
 const std::string PLAYER_ACTIVE_2_TEXTURE_PATH = "data/player/player_active_2.png";
 
 // PROJECTILE
-const int PROJECTILE_SIZE = 5;
+const int PROJECTILE_WIDTH = 50;
+const int PROJECTILE_HEIGHT = 30;
 const int PROJECTILE_SPEED = 15;
-const SDL_Rect PROJECTILE_RECT_TEXTURE = {0, 0, 5, 5};
+const SDL_Rect PROJECTILE_RECT_TEXTURE = {0, 0, PROJECTILE_WIDTH, PROJECTILE_HEIGHT};
+
+const int PROJECTILE_ANIMATION_SPEED = 10;
+const int PROJECTILE_FRAME = 4;
+const std::string PROJECTILE_1_TEXTURE_PATH = "data/projectile/projectile_1.png";
+const std::string PROJECTILE_2_TEXTURE_PATH = "data/projectile/projectile_2.png";
+const std::string PROJECTILE_3_TEXTURE_PATH = "data/projectile/projectile_3.png";
 
 // ASTEROID
 const int ASTEROID_SCORE = 20;
