@@ -53,7 +53,7 @@ Game::Game()
     SDL_Point spawn = {int(width / 2.f), int(height / 2.f)};
 
     player_manager.Init(PLAYER_BASE_HP, spawn, renderer);
-    ui_manager.Init(width, height, &score, player_manager.GetPlayerHpPtr());
+    ui_manager.Init(renderer, width, height, &score, player_manager.GetPlayerHpPtr());
     enemy_manager.Init(renderer);
     projectile_manager.Init(renderer);
 }
@@ -223,9 +223,6 @@ void Game::Run()
 
         case PLAY:
         {
-            SDL_Rect screen_rect = {0, 0, width, height};
-            SDL_RenderCopy(renderer, play_background, NULL, &screen_rect);
-
             ui_manager.Update(statut);
             player_manager.Update(width, height);
             enemy_manager.Update(width, height);
@@ -234,8 +231,8 @@ void Game::Run()
             CheckCollision();
 
             ui_manager.Display(renderer, statut);
-            player_manager.Display(renderer);
             enemy_manager.Display(renderer);
+            player_manager.Display(renderer);
             projectile_manager.Display(renderer);
         }
         break;
@@ -243,6 +240,9 @@ void Game::Run()
         case PAUSE:
         {
             ui_manager.Update(statut);
+
+            enemy_manager.Display(renderer);
+            player_manager.Display(renderer);
             ui_manager.Display(renderer, statut);
         }
         break;

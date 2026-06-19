@@ -19,7 +19,10 @@ const SDL_Color DARK_GRAY = {50, 50, 50, 255};
 const SDL_Color TRANSPARENT = {0, 0, 0, 0};
 
 // Background
-const std::string PLAY_BACKGROUND_TEXTURE_PATH = "data/game/background_Play.png";
+const std::string START_BACKGROUND_TEXTURE_PATH = "data/game/background_start.png";
+const std::string PLAY_BACKGROUND_TEXTURE_PATH = "data/game/background_play.png";
+const std::string GAME_OVER_BACKGROUND_TEXTURE_PATH = "data/game/background_game_over.png";
+
 
 // PLAYER
 const int PLAYER_SPEED = 5;

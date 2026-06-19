@@ -11,8 +11,7 @@ void emscripten_main_loop()
     else
     {
         emscripten_cancel_main_loop();
-        EM_ASM(
-            window.close(););
+        EM_ASM(window.close(););
     }
 }
 
@@ -36,3 +35,5 @@ int main(int argc, char *argv[])
 //  cd build_web
 // emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
 // cmake --build .
+
+// 1818 lignes de C++
