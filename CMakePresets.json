@@ -1,13 +1,31 @@
 {
-    "version": 2,
+    "version": 3,
     "configurePresets": [
         {
-            "name": "vcpkg",
+            "name": "windows",
+            "displayName": "Build pour Windows",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build",
+            "binaryDir": "${sourceDir}/build_windows",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_PREFIX_PATH": "C:/Users/valen/vcpkg/installed/x64-windows"
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            }
+        },
+        {
+            "name": "web",
+            "displayName": "Build pour Web (Emscripten)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build_web",
+            "environment": {
+                "PATH": "$env{EMSDK}/upstream/emscripten;$penv{PATH}"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+                "VCPKG_TARGET_TRIPLET": "wasm32-emscripten",
+                "CMAKE_CROSSCOMPILING_EMULATOR": "$env{EMSDK}/node/22.16.0_64bit/bin/node.exe"
             }
         }
     ]

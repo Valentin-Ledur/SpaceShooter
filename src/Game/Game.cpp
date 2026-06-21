@@ -24,6 +24,12 @@ Game::Game()
         SDL_Log("Erreur: initialisation de SDL : %s\n", SDL_GetError());
     }
 
+    int imgFlags = IMG_INIT_WEBP;
+    if (!(IMG_Init(imgFlags) & imgFlags))
+    {
+        SDL_Log("Erreur: initialisation de SDL_image : %s\n", IMG_GetError());
+    }
+
     if (TTF_Init() != 0)
     {
         SDL_Log("Erreur: initialisation de SDL_TTF : %s\n", SDL_GetError());
@@ -33,7 +39,7 @@ Game::Game()
     window = SDL_CreateWindow("Space Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 900, 900, SDL_WINDOW_FULLSCREEN_DESKTOP);
 
     // Creation du rendu.
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND) != 0)
     {
@@ -41,7 +47,7 @@ Game::Game()
     }
 
     // Icon de la fenetre.
-    SDL_Surface *icon = IMG_Load("data/joueur.png");
+    SDL_Surface *icon = IMG_Load(PLAYER_ACTIVE_1_TEXTURE_PATH.data());
     SDL_SetWindowIcon(window, icon);
 
     SDL_GetWindowSize(window, &width, &height);

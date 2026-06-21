@@ -30,10 +30,4 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-// Web :
-//  mkdir build_web
-//  cd build_web
-// emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
-// cmake --build .
-
 // 1818 lignes de C++

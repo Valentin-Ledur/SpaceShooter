@@ -2,11 +2,9 @@ cmake_minimum_required(VERSION 4.0)
 
 project(SpaceShooter)
 
-if (MSVC)
-    find_package(SDL2 REQUIRED)
-    find_package(SDL2_image REQUIRED)
-    find_package(SDL2_ttf REQUIRED)
-endif()
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
 add_executable(SpaceShooter
     src/main.cpp
@@ -31,21 +29,18 @@ target_include_directories(SpaceShooter PUBLIC
     "${CMAKE_PREFIX_PATH}/include/SDL2"
 )
 
+target_link_libraries(SpaceShooter PRIVATE 
+    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+    $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
+    $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>
+)
+
 if (EMSCRIPTEN)
 
     set_target_properties(SpaceShooter PROPERTIES SUFFIX ".html")
 
-    target_compile_options(SpaceShooter PRIVATE
-        "-sUSE_SDL=2"
-        "-sUSE_SDL_IMAGE=2"
-        "-sUSE_SDL_TTF=2"
-    )
-
     target_link_options(SpaceShooter PRIVATE
-        "-sUSE_SDL=2"
-        "-sUSE_SDL_IMAGE=2"
-        "-sSDL2_IMAGE_FORMATS=['png']"
-        "-sUSE_SDL_TTF=2"
         "-sALLOW_MEMORY_GROWTH=1"
         "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/data@data"
         "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/font@font"
@@ -65,13 +60,6 @@ elseif(MSVC)
     target_include_directories(SpaceShooter PUBLIC
         "${CMAKE_PREFIX_PATH}/include"
         "${CMAKE_PREFIX_PATH}/include/SDL2"
-    )
-
-    target_link_libraries(SpaceShooter PRIVATE 
-        SDL2::SDL2main 
-        SDL2::SDL2 
-        SDL2_image::SDL2_image 
-        SDL2_ttf::SDL2_ttf
     )
 
     target_compile_definitions(SpaceShooter PRIVATE _SCL_SECURE_NO_WARNINGS)
