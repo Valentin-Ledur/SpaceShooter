@@ -5,11 +5,11 @@
         "sdl2", 
         {
             "name": "sdl2-image",
+            "default-features": false,
             "features": [
                 "libwebp"
             ]
         },
-        "sdl2-ttf",
-        "libavif"
+        "sdl2-ttf"
     ]
 }
