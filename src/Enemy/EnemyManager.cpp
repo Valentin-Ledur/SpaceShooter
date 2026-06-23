@@ -124,9 +124,19 @@ void EnemyManager::DisplayBaseAsteroid(Asteroid _a, SDL_Renderer *_renderer, Ast
             break;
 
         case BROWN:
-            if (SDL_RenderCopyEx(_renderer, texture_brown_base_1_150, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            if (*(_a.GetHP()) == 1)
             {
-                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+                if (SDL_RenderCopyEx(_renderer, texture_brown_base_1_150, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+                {
+                    SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+                }
+            }
+            else
+            {
+                if (SDL_RenderCopyEx(_renderer, texture_brown_base_2_150, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+                {
+                    SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+                }
             }
             break;
 
@@ -150,9 +160,19 @@ void EnemyManager::DisplayBaseAsteroid(Asteroid _a, SDL_Renderer *_renderer, Ast
             break;
 
         case BROWN:
-            if (SDL_RenderCopyEx(_renderer, texture_brown_base_1_100, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+            if (*(_a.GetHP()) == 1)
             {
-                SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+                if (SDL_RenderCopyEx(_renderer, texture_brown_base_1_100, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+                {
+                    SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+                }
+            }
+            else
+            {
+                if (SDL_RenderCopyEx(_renderer, texture_brown_base_2_100, NULL, &position, _a.GetAngle(), NULL, SDL_FLIP_NONE))
+                {
+                    SDL_Log("Erreur: chargement de la texture du asteroid dans le rendu : %s\n", SDL_GetError());
+                }
             }
             break;
 
@@ -202,6 +222,27 @@ void EnemyManager::Display(SDL_Renderer *_renderer)
             DisplayAsteroidWithTrail(a, _renderer, a.GetType());
         }
     }
+}
+
+bool EnemyManager::AddAsteroid(Asteroid* _a)
+{
+    int* hp = _a->GetHP();
+    if (_a->GetSize() > 1 && *hp - 1 <= 0)
+    {
+        asteroid_list.emplace_back(Asteroid(_a->GetSize(), *(_a->GetPosition()), _a->GetType()));
+        asteroid_list.emplace_back(Asteroid(_a->GetSize(), *(_a->GetPosition()), _a->GetType()));
+        return true;
+    }
+    else if(_a->GetSize() == 1)
+    {
+        return true;
+    }
+    else
+    {
+        *hp -= 1;
+    }
+
+    return false;
 }
 
 void EnemyManager::Reset()

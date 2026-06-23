@@ -34,16 +34,26 @@ bool PlayerManager::IsMoving()
 void PlayerManager::MovePlayer(int _width, int _height)
 {
     if (up && player.GetPosition()->y > texture_rectangle.h / 2)
-        player.GetPosition()->y -= PLAYER_SPEED;
+        player.GetPosition()->y -= speed;
 
     if (down && player.GetPosition()->y < _height - texture_rectangle.h / 2)
-        player.GetPosition()->y += PLAYER_SPEED;
+        player.GetPosition()->y += speed;
 
     if (right && player.GetPosition()->x < _width - 63)
-        player.GetPosition()->x += PLAYER_SPEED;
+        player.GetPosition()->x += speed;
 
     if (left && player.GetPosition()->x > 63)
-        player.GetPosition()->x -= PLAYER_SPEED;
+        player.GetPosition()->x -= speed;
+}
+
+void PlayerManager::HandleEffect(Effect _effect)
+{
+    if (_effect == SLOW)
+    {
+        is_slow = true;
+        speed = PLAYER_SLOW_SPEED;
+        effect_end = SDL_GetTicks() + PLAYER_SLOW_TIME;
+    }
 }
 
 void PlayerManager::HandleEvent(SDL_Event _event, GameStatut _statut)
@@ -90,6 +100,12 @@ void PlayerManager::HandleEvent(SDL_Event _event, GameStatut _statut)
 
 void PlayerManager::Update(int _width, int _height)
 {
+    if (is_slow && effect_end <= SDL_GetTicks())
+    {
+        is_slow = false;
+        speed = PLAYER_SPEED;
+    }
+    
     int x, y;
     SDL_GetMouseState(&x, &y);
     SDL_Point mouse_position = {x, y};
@@ -119,6 +135,8 @@ void PlayerManager::Reset()
 {
     *(player.GetHp()) = PLAYER_BASE_HP;
     *(player.GetPosition()) = start_position;
+
+    speed = PLAYER_SPEED;
 
     up = false;
     down = false;

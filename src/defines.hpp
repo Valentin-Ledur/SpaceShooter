@@ -26,6 +26,8 @@ const std::string GAME_OVER_BACKGROUND_TEXTURE_PATH = "data/game/background_game
 
 // PLAYER
 const int PLAYER_SPEED = 5;
+const int PLAYER_SLOW_SPEED = 2;
+const int PLAYER_SLOW_TIME = 5000;
 const int PLAYER_BASE_HP = 3;
 const int PLAYER_WIDTH = 75;
 const int PLAYER_HEIGHT = 75;

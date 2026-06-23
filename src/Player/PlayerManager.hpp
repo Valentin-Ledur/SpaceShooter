@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include "defines.hpp"
 #include "Game/GameStatut.hpp"
+#include "Effect/Effect.hpp"
 #include "Animation/Animation.hpp"
 #include "Player/Player.hpp"
 
@@ -18,7 +19,11 @@ private:
     Animation idle;
     Animation active;
 
+    unsigned int effect_end = 0;
+    bool is_slow = false;
+
     double rotation = 0.0;
+    int speed = PLAYER_SPEED;
     bool up = false;
     bool down = false;
     bool right = false;
@@ -32,6 +37,7 @@ public:
     ~PlayerManager() {};
 
     void Init(int _hp, SDL_Point _position, SDL_Renderer *_renderer);
+    void HandleEffect(Effect _effect);
     void HandleEvent(SDL_Event _event, GameStatut _statut);
     void Update(int _width, int _height);
     void Display(SDL_Renderer *_renderer);

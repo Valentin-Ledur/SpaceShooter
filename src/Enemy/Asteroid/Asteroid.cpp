@@ -1,6 +1,7 @@
 #include <cmath>
 #include "Utils/Utils.hpp"
 #include "defines.hpp"
+#include "Effect/Effect.hpp"
 #include "Enemy/Asteroid/AsteroidType.hpp"
 #include "Enemy/Asteroid/Asteroid.hpp"
 
@@ -68,11 +69,25 @@ Asteroid::Asteroid(int _width, int _height)
     {
         int random_type = Utils::Random(0, 4);
         if (random_type == 0)
+        {
             type = BASIC;
+        }
         else if (random_type == 1)
+        {
             type = BROWN;
+            if (Utils::Random(0, 1) == 0)
+            {
+                hp = 2;
+            }
+        }
         else
+        {
             type = ICE;
+            if (Utils::Random(0, 1) == 0)
+            {
+                effect = SLOW;
+            }
+        }
 
         rotation_speed = Utils::Random(-5, 5);
     }
@@ -99,13 +114,22 @@ Asteroid::Asteroid(int _size, SDL_Point _position, AsteroidType _type)
             break;
 
         default:
+        {
             type = ICE_TRAIL;
-            break;
+            effect = SLOW;
+        }
+        break;
         }
     }
     else
     {
         rotation_speed = Utils::Random(-5, 5);
+
+        if (Utils::Random(0, 1) == 0)
+        {
+            hp = 2;
+        }
+
         type = _type;
     }
 

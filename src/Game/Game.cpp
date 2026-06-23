@@ -150,14 +150,13 @@ void Game::CheckCollision()
 
             if (SDL_PointInRect(p->GetPosition(), &asteroid_rect))
             {
-                score += ASTEROID_SCORE;
-                if (a->GetSize() > 1)
+
+                if (enemy_manager.AddAsteroid(&(*a)) == true)
                 {
-                    list_asteroids->emplace_back(Asteroid(a->GetSize(), *(a->GetPosition()), a->GetType()));
-                    list_asteroids->emplace_back(Asteroid(a->GetSize(), *(a->GetPosition()), a->GetType()));
+                    score += ASTEROID_SCORE;
+                    a = list_asteroids->erase(a);
                 }
 
-                a = list_asteroids->erase(a);
                 projectile_detruit = true;
                 break;
             }
@@ -186,12 +185,13 @@ void Game::CheckCollision()
             int *hp = player_manager.GetPlayerHpPtr();
             *hp = *hp - 1;
 
-            a = list_asteroids->erase(a);
-
             if (*hp <= 0)
             {
                 statut = GAME_OVER;
             }
+
+            player_manager.HandleEffect(a->GetEffect());
+            a = list_asteroids->erase(a);
         }
         else
         {

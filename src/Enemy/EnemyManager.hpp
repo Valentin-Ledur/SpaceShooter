@@ -60,6 +60,7 @@ public:
     void Init(SDL_Renderer *_renderer);
     void Update(int _width, int _height);
     void Display(SDL_Renderer *_renderer);
+    bool AddAsteroid(Asteroid* _a);
     void Reset();
     void Clean();
     std::list<Asteroid> *GetAsteroidListPtr() { return &asteroid_list; }
