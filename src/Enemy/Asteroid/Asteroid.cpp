@@ -59,11 +59,18 @@ Asteroid::Asteroid(int _width, int _height)
 
         int random_type = Utils::Random(0, 4) * 2;
         if (random_type == 0)
+        {
             type = BASIC_TRAIL;
+        }
         else if (random_type == 1)
+        {
             type = BROWN_TRAIL;
+        }
         else
+        {
             type = ICE_TRAIL;
+            effect = SLOW;
+        }
     }
     else
     {
@@ -75,7 +82,7 @@ Asteroid::Asteroid(int _width, int _height)
         else if (random_type == 1)
         {
             type = BROWN;
-            if (Utils::Random(0, 1) == 0)
+            if (Utils::Random(0, 2) == 0)
             {
                 hp = 2;
             }
@@ -124,13 +131,14 @@ Asteroid::Asteroid(int _size, SDL_Point _position, AsteroidType _type)
     else
     {
         rotation_speed = Utils::Random(-5, 5);
+        type = _type;
 
-        if (Utils::Random(0, 1) == 0)
+        if (type == BROWN && Utils::Random(0, 1) == 0)
         {
             hp = 2;
         }
 
-        type = _type;
+        
     }
 
     position = _position;

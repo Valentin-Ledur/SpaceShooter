@@ -222,6 +222,11 @@ void Game::Run()
         {
         case START:
         {
+            projectile_manager.Reset();
+            enemy_manager.Reset();
+            player_manager.Reset();
+            score = 0;
+
             ui_manager.Update(statut);
             ui_manager.Display(renderer, statut);
         }
@@ -255,11 +260,6 @@ void Game::Run()
 
         case GAME_OVER:
         {
-            projectile_manager.Reset();
-            enemy_manager.Reset();
-            player_manager.Reset();
-            score = 0;
-
             ui_manager.Update(statut);
             ui_manager.Display(renderer, statut);
         }

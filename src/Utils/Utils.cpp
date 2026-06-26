@@ -1,3 +1,4 @@
+#include <random>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
@@ -118,8 +119,11 @@ namespace Utils
 
     int Random(int range_min, int range_max)
     {
-        int r = ((double)rand() / RAND_MAX) * (range_max - range_min) + range_min;
-        return r;
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(range_min, range_max - 1);
+
+        return dist(gen);
     }
 
     bool IsOutScreen(int width, int height, SDL_Point point){
