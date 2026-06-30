@@ -15,6 +15,7 @@ class Game
 {
 private:
     int score = 0;
+    int last_score = 0;
     int width = 0;
     int height = 0;
     bool run = true;

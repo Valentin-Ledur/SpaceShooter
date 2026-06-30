@@ -21,7 +21,7 @@ public:
     UIManager() {};
     ~UIManager() {};
 
-    void Init(SDL_Renderer *_renderer, int _width, int _height, int *_score_ptr, int *_hp_ptr);
+    void Init(SDL_Renderer *_renderer, int _width, int _height, int *_score_ptr, int *_last_score_ptr, int *_hp_ptr);
     void Clean();
     GameStatut HandleEvent(SDL_Event _event, GameStatut _current_game_statut);
     void Update(GameStatut _current_game_statut);

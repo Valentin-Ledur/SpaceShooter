@@ -52,6 +52,13 @@ Game::Game()
 
     SDL_GetWindowSize(window, &width, &height);
 
+    if (width < height)
+    {
+        int tmp = width;
+        width = height;
+        height = tmp;
+    }
+
     rect_background = {0, 0, width, height};
 
     play_background = Utils::CreateTexture(renderer, PLAY_BACKGROUND_TEXTURE_PATH, rect_background);
@@ -59,7 +66,7 @@ Game::Game()
     SDL_Point spawn = {int(width / 2.f), int(height / 2.f)};
 
     player_manager.Init(PLAYER_BASE_HP, spawn, renderer);
-    ui_manager.Init(renderer, width, height, &score, player_manager.GetPlayerHpPtr());
+    ui_manager.Init(renderer, width, height, &score, &last_score, player_manager.GetPlayerHpPtr());
     enemy_manager.Init(renderer);
     projectile_manager.Init(renderer);
 }
@@ -260,6 +267,7 @@ void Game::Run()
 
         case GAME_OVER:
         {
+            last_score = score;
             ui_manager.Update(statut);
             ui_manager.Display(renderer, statut);
         }
