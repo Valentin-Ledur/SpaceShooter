@@ -1,4 +1,4 @@
-# <center>SpaceShooter 2D</center>
+# SpaceShooter 2D
 
 <img src="old/spaceshooter.webp">
 
@@ -24,7 +24,7 @@ Il existe 3 types d'astéroïdes qui rapportent tous 20 points lors de leur dest
 
 - **Métalliques**, plus clairs que les astéroïdes rocheux, ils ont une chance d'apparaître avec un morceau de métal qui leur confère une protection contre le premier projectile rencontré;
 
-- **Glaciaux**, ralentissent le joueur pendant 5 secondes s'ils le touches;
+- **Glaciaux**, ralentissent le joueur pendant 5 secondes s'ils le touchent;
 
 ## Bibliothèques utilisées :
 
@@ -52,7 +52,7 @@ Pour la version C, il n'existait que quelques fichiers qui étaient compilés à
 
 ### 2. Version C++ (finale)
 
-Passer au C++ m'a permis de revoir la structure globale de mon projet ainsi que d'utiliser cmake et vcpkg pour gérer les bibliothèques que j'ai utilisées et pour compiler le code. Ainsi que de passer au compilateur **MSVC** pour la version Windows et **Emscripte** pour ajouter un support web ([disponible ici](https://valentin-ledur.github.io/valentin-ledur/spaceshooter/launch.html)).<br>
+Passer au C++ m'a permis de revoir la structure globale de mon projet ainsi que d'utiliser cmake et vcpkg pour gérer les bibliothèques que j'ai utilisées et pour compiler le code. Ainsi que de passer au compilateur **MSVC** pour la version Windows et **Emscripten** pour ajouter un support web ([disponible ici](https://valentin-ledur.github.io/valentin-ledur/spaceshooter/launch.html)).<br>
 
 Pour cette version, je suis passé d'une structure monolithique où la classe ***Game*** gérait tout à un système de ***managers*** pour séparer les différentes responsabilités:
 
