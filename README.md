@@ -1,6 +1,6 @@
 # <center>SpaceShooter 2D</center>
 
-<img src="old/presentation.png">
+<img src="old/spaceshooter.webp">
 
 ## Contexte :
 
