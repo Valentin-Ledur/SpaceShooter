@@ -4,7 +4,7 @@
 
 ## Contexte :
 
-J'ai réalisé ce jeu 2D de type ***SpaceShooter*** au cours de mes études. Cela m'a permis d'apprendre les langages C et C++, ainsi qu'à utiliser vcpkg dans Visual Studio Code avec l'extension cmake.
+J'ai réalisé ce jeu 2D de type ***SpaceShooter*** pour apprendre les bases des langages C et C++, ainsi qu'à utiliser vcpkg dans Visual Studio Code avec l'extension cmake.
 
 ## Commandes :
 
