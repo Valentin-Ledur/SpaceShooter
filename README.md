@@ -70,43 +70,31 @@ Pour cette version, je suis passé d'une structure monolithique où la classe **
 
 ## Compilation
 
-### Prérequis
+Commencez par cloner le projet :
 
-Avant de compiler le projet, assurez-vous d'avoir installé les outils suivants sur votre machine :
+`git clone https://github.com/Valentin-Ledur/SpaceShooter.git`
 
-- [Git](https://git-scm.com/);
+`cd SpaceShooter`
 
-- [CMake](https://cmake.org/);
+Ensuite, assurez-vous d'avoir installé **vcpkg** ainsi que d'avoir créé la variable d'environnement
+**VCPKG_ROOT**, mais aussi **Emscripten** et la variable **EMSDK** si vous souhaitez compiler pour le Web.
 
-- [MSVC](https://visualstudio.microsoft.com/fr/) pour Windows;
+### Visual Studio Code
 
-- [vcpkg](https://vcpkg.io/) (pour la gestion des bibliothèques SDL2);
+Pour compiler à l'aide de l'interface de Visual Studio Code, vous aurez besoin de l'extension CMake, ainsi que d'exécuter Visual Studio Code dans un terminal ayant accès au compilateur correspondant à la plateforme que vous visez (MSVC pour Windows et Emscripten pour le Web). Ensuite, si vous avez configuré correctement votre environnement, vous n'aurez plus qu'à utiliser l'interface de Visual Studio Code pour compiler/exécuter le programme.
 
-- [Emscripten](https://emscripten.org/) si vous souhaitez compiler la version Web;
+### CMake Windows
 
-### Installation
+Pour compiler en ligne de commande pour Windows :
 
-Commencez par cloner le projet :<br>
-
-`git clone https://github.com/Valentin-Ledur/SpaceShooter.git`<br>
-
-`cd spaceshooter`<br>
-
-### 1. Version Windows (MSVC)
-
-Si vous utilisez Visual Studio Code, vous pouvez ouvrir le projet et utiliser l'extension CMake. Grâce au fichier CMakePresets.json inclus dans le projet, il vous suffit d'utiliser les boutons présents dans l'interface de Visual Studio Code pour configurer et compiler automatiquement.
-
-Pour compiler manuellement en ligne de commande :<br>
-
-`cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE="chemin/vers/vcpkg/scripts/buildsystems/vcpkg.cmake"`<br>
+`cmake -B build -S . --preset windows`
 
 `cmake --build build`
 
-### 2. Version Web (Emscripten)
-Pour compiler la version Web, il suffit de créer une variable d'environnement système EMSDK contenant le chemin vers votre installation Emscripten.<br>
+### CMake Emscripten
 
-Ensuite, utilisez le wrapper CMake d'Emscripten pour générer le projet :<br>
+Pour compiler en ligne de commande pour le Web :
 
-`emcmake cmake -B build_web -S . -DCMAKE_TOOLCHAIN_FILE="chemin/vers/vcpkg/scripts/buildsystems/vcpkg.cmake"`<br>
+`cmake -B build -S . --preset web`
 
-`cmake --build build_web`<br>
+`cmake --build build`
