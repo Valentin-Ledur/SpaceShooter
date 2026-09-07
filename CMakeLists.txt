@@ -46,7 +46,7 @@ if (EMSCRIPTEN)
         "SHELL:--preload-file ${CMAKE_CURRENT_SOURCE_DIR}/font@font"
     )
 
-elseif(MSVC)
+elseif(MSVC OR GCC)
     add_custom_command(TARGET SpaceShooter POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_CURRENT_SOURCE_DIR}/data"

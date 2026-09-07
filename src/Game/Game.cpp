@@ -77,8 +77,8 @@ Game::~Game()
     enemy_manager.Clean();
     projectile_manager.Clean();
 
-    SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
 
     TTF_Quit();
     SDL_Quit();
