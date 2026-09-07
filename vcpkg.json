@@ -11,5 +11,13 @@
             ]
         },
         "sdl2-ttf"
-    ]
+    ],
+    "features": {
+        "linux": {
+            "description": "python interpretor dependencie",
+            "dependencies":[
+                "pybind11"
+            ]
+        }
+    }
 }
