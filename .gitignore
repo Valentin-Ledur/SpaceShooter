@@ -3,3 +3,4 @@
 build
 build_web
 build_windows
+build_linux

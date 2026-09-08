@@ -3,7 +3,7 @@
     "configurePresets": [
         {
             "name": "windows",
-            "displayName": "Build pour Windows",
+            "displayName": "Windows",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build_windows",
             "cacheVariables": {
@@ -13,8 +13,21 @@
             }
         },
         {
+            "name": "linux",
+            "displayName": "Linux",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build_linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_MANIFEST_FEATURES": "linux",
+                "VCPKG_TARGET_TRIPLET": "x64-linux",
+                "PYTHON": true
+            }
+        },
+        {
             "name": "web",
-            "displayName": "Build pour Web (Emscripten)",
+            "displayName": "Web (Emscripten)",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build_web",
             "environment": {
