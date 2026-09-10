@@ -72,3 +72,31 @@ void ProjectileManager::Reset()
 {
     player_projectile.clear();
 }
+
+#if PYTHON || true
+void ProjectileManager::HandleAIOutput(AIDataOutput _ai_data_output, SDL_Point _player_position)
+{
+    if (_ai_data_output.shoot)
+    {
+        float dir_x = _ai_data_output.x;
+        float dir_y = _ai_data_output.y;
+
+        float norme = sqrtf(dir_x * dir_x + dir_y * dir_y);
+
+        SDL_Point projectile_direction = {0, 0};
+
+        if (norme != 0)
+        {
+            projectile_direction.x = (dir_x / norme) * PROJECTILE_SPEED;
+            projectile_direction.y = (dir_y / norme) * PROJECTILE_SPEED;
+        }
+
+        double angle = atan2(dir_y, dir_x) * 180.0 / M_PI;
+
+        player_projectile.emplace_back(Projectile(
+            _player_position,
+            {_ai_data_output.x, _ai_data_output.y},
+            angle));
+    }
+}
+#endif

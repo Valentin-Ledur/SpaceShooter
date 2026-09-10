@@ -98,19 +98,28 @@ void PlayerManager::HandleEvent(SDL_Event _event, GameStatut _statut)
     }
 }
 
+#if !PYTHON
 void PlayerManager::Update(int _width, int _height)
+#else
+void PlayerManager::Update(int _width, int _height, AIDataOutput _ai_data_output)
+#endif
 {
     if (is_slow && effect_end <= SDL_GetTicks())
     {
         is_slow = false;
         speed = PLAYER_SPEED;
     }
-    
+
     int x, y;
     SDL_GetMouseState(&x, &y);
     SDL_Point mouse_position = {x, y};
     SDL_Point *_position = player.GetPosition();
+#if !PYTHON
     rotation = atan2(_position->y - mouse_position.y, _position->x - mouse_position.x) * 180.0 / M_PI - 180;
+#else
+    rotation = atan2(_position->y - _ai_data_output.y, _position->x - _ai_data_output.x) * 180.0 / M_PI - 180;
+#endif
+
     MovePlayer(_width, _height);
 }
 
@@ -143,3 +152,13 @@ void PlayerManager::Reset()
     right = false;
     left = false;
 }
+
+#if PYTHON || true
+void PlayerManager::HandleAIData(AIDataOutput _ai_data_output)
+{
+    up = _ai_data_output.up;
+    down = _ai_data_output.down;
+    right = _ai_data_output.right;
+    left = _ai_data_output.left;
+}
+#endif

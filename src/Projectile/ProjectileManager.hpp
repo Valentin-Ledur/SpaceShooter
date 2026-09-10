@@ -9,6 +9,10 @@
 #include "Animation/Animation.hpp"
 #include "Projectile/Projectile.hpp"
 
+#if PYTHON || true
+#include "Game/AIData.hpp"
+#endif
+
 class ProjectileManager
 {
 private:
@@ -25,8 +29,12 @@ public:
     void Update(int _width, int _height);
     void Display(SDL_Renderer *_renderer);
     void Reset();
-    void Clean(){ projectile.Clean(); }
+    void Clean() { projectile.Clean(); }
     std::list<Projectile> *GetPlayerProjectilePtr() { return &player_projectile; }
+
+#if PYTHON || true
+    void HandleAIOutput(AIDataOutput _ai_data_output, SDL_Point _player_position);
+#endif
 };
 
 #endif

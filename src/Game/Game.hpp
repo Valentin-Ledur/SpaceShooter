@@ -11,6 +11,10 @@
 #include "Player/PlayerManager.hpp"
 #include "Enemy/EnemyManager.hpp"
 
+#if PYTHON || true
+#include "Game/AIData.hpp"
+#endif
+
 class Game
 {
 private:
@@ -31,6 +35,12 @@ private:
     PlayerManager player_manager;
     EnemyManager enemy_manager;
 
+#if PYTHON || true
+    bool show_ia_play = false;
+    void HandleAIOutput(AIDataOutput _ai_data_output);
+    std::vector<float> GetAIInput(AIDataOutput _ai_data_output);
+#endif
+
     void HandleEvent(SDL_Event _event);
     void Update();
     void Display();
@@ -42,6 +52,11 @@ public:
 
     void Run();
     bool IsRunning() { return run; }
+
+#if PYTHON || true
+    void Reset();
+    AIDataInput Step(AIDataOutput _ia_data_outpu);
+#endif
 };
 
 #endif

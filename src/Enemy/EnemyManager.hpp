@@ -32,7 +32,7 @@ private:
 
     SDL_Texture *texture_brown_base_2_100 = NULL;
     SDL_Texture *texture_brown_base_2_150 = NULL;
-    
+
     Animation brown_trail;
 
     // Ice
@@ -45,10 +45,17 @@ private:
 
     Animation ice_trail;
 
+#if !PYTHON
     // A changer
     int addNewAsteroid = 0;
     int addMore = 1000;
     int timeNew = 500;
+#else
+    int ticks = 0;
+    int addNewAsteroid = 0;
+    int addMore = 300;
+    int timeNew = 10;
+#endif
 
     void DisplayBaseAsteroid(Asteroid _a, SDL_Renderer *_renderer, AsteroidType _type);
     void DisplayAsteroidWithTrail(Asteroid _a, SDL_Renderer *_renderer, AsteroidType _type);
@@ -60,7 +67,7 @@ public:
     void Init(SDL_Renderer *_renderer);
     void Update(int _width, int _height);
     void Display(SDL_Renderer *_renderer);
-    bool AddAsteroid(Asteroid* _a);
+    bool AddAsteroid(Asteroid *_a);
     void Reset();
     void Clean();
     std::list<Asteroid> *GetAsteroidListPtr() { return &asteroid_list; }

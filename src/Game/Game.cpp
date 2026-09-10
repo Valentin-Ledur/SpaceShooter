@@ -13,6 +13,10 @@
 #include "Game/Game.hpp"
 #include "Enemy/Asteroid/Asteroid.hpp"
 
+#if PYTHON || true
+#include "Game/AIData.hpp"
+#endif
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -293,3 +297,98 @@ void Game::Run()
     }
 #endif
 }
+
+#if PYTHON || true
+
+#include <algorithm>
+
+void Game::HandleAIOutput(AIDataOutput _ai_data_output)
+{
+
+    player_manager.HandleAIData(_ai_data_output);
+    projectile_manager.HandleAIOutput(_ai_data_output, *(player_manager.GetPlayerPositionPtr()));
+}
+
+std::vector<float> Game::GetAIInput(AIDataOutput _ai_data_output)
+{
+    std::vector<float> inputs;
+
+    SDL_Point *p_pos = player_manager.GetPlayerPositionPtr();
+
+    inputs.push_back(float(p_pos->x / width));
+    inputs.push_back(float(p_pos->y / height));
+    inputs.push_back(float(*(player_manager.GetPlayerHpPtr())));
+
+    auto *asteroids = enemy_manager.GetAsteroidListPtr();
+    std::vector<Asteroid *> sorted_asteroids;
+    sorted_asteroids.reserve(asteroids->size());
+
+    for (auto &a : *asteroids)
+    {
+        sorted_asteroids.push_back(&a);
+    }
+
+    std::sort(sorted_asteroids.begin(), sorted_asteroids.end(), [p_pos](Asteroid *a, Asteroid *b)
+              {
+        float distA = std::hypot(a->GetPosition()->x - p_pos->x, a->GetPosition()->y - p_pos->y);
+        float distB = std::hypot(b->GetPosition()->x - p_pos->x, b->GetPosition()->y - p_pos->y);
+        return distA < distB; });
+
+    const int MAX_ASTEROIDS = 6;
+    int count = 0;
+    for (auto *a : sorted_asteroids)
+    {
+        if (count >= MAX_ASTEROIDS)
+            break;
+
+        inputs.push_back(static_cast<float>(a->GetPosition()->x - p_pos->x) / width);
+        inputs.push_back(static_cast<float>(a->GetPosition()->y - p_pos->y) / height);
+        inputs.push_back(static_cast<float>(a->GetDirection()->x) / 10.0f);
+        inputs.push_back(static_cast<float>(a->GetDirection()->y) / 10.0f);
+        inputs.push_back(static_cast<float>(a->GetSize()) / 3.0f);
+        count++;
+    }
+
+    while (count < MAX_ASTEROIDS)
+    {
+        inputs.push_back(0.0f);
+        inputs.push_back(0.0f);
+        inputs.push_back(0.0f);
+        inputs.push_back(0.0f);
+        inputs.push_back(0.0f);
+        count++;
+    }
+
+    inputs.push_back(1.0f);
+}
+
+void Game::Reset()
+{
+    player_manager.Reset();
+    enemy_manager.Reset();
+    projectile_manager.Reset();
+}
+
+AIDataInput Game::Step(AIDataOutput _ai_data_output)
+{
+
+    HandleAIOutput(_ai_data_output);
+
+    player_manager.Update(width, height);
+    enemy_manager.Update(width, height);
+    projectile_manager.Update(width, height);
+
+    CheckCollision();
+
+    if (show_ia_play)
+    {
+        ui_manager.Display(renderer, PLAY);
+        enemy_manager.Display(renderer);
+        player_manager.Display(renderer);
+        projectile_manager.Display(renderer);
+    }
+
+    return {GetAIInput(_ai_data_output), };
+}
+
+#endif

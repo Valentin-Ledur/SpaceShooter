@@ -9,13 +9,17 @@
 #include "Animation/Animation.hpp"
 #include "Player/Player.hpp"
 
+#if PYTHON || true
+#include "Game/AIData.hpp"
+#endif
+
 class PlayerManager
 {
 private:
     Player player = Player();
     SDL_Point start_position = BASE_POINT;
     SDL_Rect texture_rectangle = BASE_RECT;
-    
+
     Animation idle;
     Animation active;
 
@@ -39,12 +43,21 @@ public:
     void Init(int _hp, SDL_Point _position, SDL_Renderer *_renderer);
     void HandleEffect(Effect _effect);
     void HandleEvent(SDL_Event _event, GameStatut _statut);
+
+#if !PYTHON
     void Update(int _width, int _height);
+#else
+    void Update(int _width, int _height, AIDataOutput _ai_data_output);
+#endif
     void Display(SDL_Renderer *_renderer);
     void Reset();
     void Clean();
     int *GetPlayerHpPtr() { return player.GetHp(); }
     SDL_Point *GetPlayerPositionPtr() { return player.GetPosition(); }
+
+#if PYTHON || true
+    void HandleAIData(AIDataOutput _ai_data_output);
+#endif
 };
 
 #endif

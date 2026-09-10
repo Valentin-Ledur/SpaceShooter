@@ -96,6 +96,8 @@ void EnemyManager::Update(int _width, int _height)
         }
     }
 
+#if !PYTHON
+
     if (addNewAsteroid < SDL_GetTicks())
     {
         asteroid_list.push_back(Asteroid(_width, _height));
@@ -106,6 +108,22 @@ void EnemyManager::Update(int _width, int _height)
         timeNew -= 50;
         addMore += 1000;
     }
+#endif
+
+#if PYTHON
+    if (addNewAsteroid < ticks)
+    {
+        asteroid_list.push_back(Asteroid(_width, _height));
+        addNewAsteroid += timeNew;
+    }
+    if (addMore < ticks && timeNew > 5)
+    {
+        timeNew -= 1;
+        addMore += 1000;
+    }
+
+    ticks++;
+#endif
 }
 
 void EnemyManager::DisplayBaseAsteroid(Asteroid _a, SDL_Renderer *_renderer, AsteroidType _type)
@@ -224,16 +242,16 @@ void EnemyManager::Display(SDL_Renderer *_renderer)
     }
 }
 
-bool EnemyManager::AddAsteroid(Asteroid* _a)
+bool EnemyManager::AddAsteroid(Asteroid *_a)
 {
-    int* hp = _a->GetHP();
+    int *hp = _a->GetHP();
     if (_a->GetSize() > 1 && *hp - 1 <= 0)
     {
         asteroid_list.emplace_back(Asteroid(_a->GetSize(), *(_a->GetPosition()), _a->GetType()));
         asteroid_list.emplace_back(Asteroid(_a->GetSize(), *(_a->GetPosition()), _a->GetType()));
         return true;
     }
-    else if(_a->GetSize() == 1)
+    else if (_a->GetSize() == 1)
     {
         return true;
     }
@@ -247,9 +265,19 @@ bool EnemyManager::AddAsteroid(Asteroid* _a)
 
 void EnemyManager::Reset()
 {
+
+#if !PYTHON
     // A changer
     addNewAsteroid = (int)SDL_GetTicks();
     addMore = 1000;
     timeNew = 500;
+    asteroid_list.clear();
+#else
+    int ticks = 0;
+    int addNewAsteroid = 0;
+    int addMore = 300;
+    int timeNew = 10;
+#endif
+
     asteroid_list.clear();
 }
