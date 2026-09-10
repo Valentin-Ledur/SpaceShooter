@@ -1,5 +1,5 @@
 #ifndef __AI_DATA__
-#define __AI__
+#define __AI_DATA__
 
 typedef struct AIDataInput
 {
