@@ -11,7 +11,7 @@
 #include "Player/PlayerManager.hpp"
 #include "Enemy/EnemyManager.hpp"
 
-#if PYTHON || true
+#if PYTHON
 #include "Game/AIData.hpp"
 #endif
 
@@ -35,7 +35,8 @@ private:
     PlayerManager player_manager;
     EnemyManager enemy_manager;
 
-#if PYTHON || true
+#if PYTHON
+    float current_ia_score = 0.f;
     bool show_ia_play = false;
     void HandleAIOutput(AIDataOutput _ai_data_output);
     std::vector<float> GetAIInput(AIDataOutput _ai_data_output);
@@ -53,9 +54,9 @@ public:
     void Run();
     bool IsRunning() { return run; }
 
-#if PYTHON || true
+#if PYTHON
     void Reset();
-    AIDataInput Step(AIDataOutput _ia_data_outpu);
+    std::vector<float> Step(AIDataOutput _ia_data_outpu);
 #endif
 };
 

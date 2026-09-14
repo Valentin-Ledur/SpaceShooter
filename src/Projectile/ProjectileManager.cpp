@@ -73,7 +73,7 @@ void ProjectileManager::Reset()
     player_projectile.clear();
 }
 
-#if PYTHON || true
+#if PYTHON
 void ProjectileManager::HandleAIOutput(AIDataOutput _ai_data_output, SDL_Point _player_position)
 {
     if (_ai_data_output.shoot)

@@ -1,6 +1,8 @@
 #ifndef __AI_DATA__
 #define __AI_DATA__
 
+#include <vector>
+
 typedef struct AIDataInput
 {
     std::vector<float> observation;

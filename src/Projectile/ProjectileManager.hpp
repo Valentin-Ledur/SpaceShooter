@@ -9,7 +9,7 @@
 #include "Animation/Animation.hpp"
 #include "Projectile/Projectile.hpp"
 
-#if PYTHON || true
+#if PYTHON
 #include "Game/AIData.hpp"
 #endif
 
@@ -32,7 +32,7 @@ public:
     void Clean() { projectile.Clean(); }
     std::list<Projectile> *GetPlayerProjectilePtr() { return &player_projectile; }
 
-#if PYTHON || true
+#if PYTHON
     void HandleAIOutput(AIDataOutput _ai_data_output, SDL_Point _player_position);
 #endif
 };

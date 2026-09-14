@@ -9,7 +9,7 @@
 #include "Animation/Animation.hpp"
 #include "Player/Player.hpp"
 
-#if PYTHON || true
+#if PYTHON
 #include "Game/AIData.hpp"
 #endif
 
@@ -55,7 +55,7 @@ public:
     int *GetPlayerHpPtr() { return player.GetHp(); }
     SDL_Point *GetPlayerPositionPtr() { return player.GetPosition(); }
 
-#if PYTHON || true
+#if PYTHON
     void HandleAIData(AIDataOutput _ai_data_output);
 #endif
 };

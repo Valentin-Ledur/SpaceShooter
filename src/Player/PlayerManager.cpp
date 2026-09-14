@@ -153,7 +153,7 @@ void PlayerManager::Reset()
     left = false;
 }
 
-#if PYTHON || true
+#if PYTHON
 void PlayerManager::HandleAIData(AIDataOutput _ai_data_output)
 {
     up = _ai_data_output.up;

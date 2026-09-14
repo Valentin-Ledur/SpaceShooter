@@ -13,7 +13,7 @@
 #include "Game/Game.hpp"
 #include "Enemy/Asteroid/Asteroid.hpp"
 
-#if PYTHON || true
+#if PYTHON
 #include "Game/AIData.hpp"
 #endif
 
@@ -92,6 +92,7 @@ void Game::HandleEvent(SDL_Event _event)
 {
     while (SDL_PollEvent(&_event))
     {
+#if !PYTHON
         switch (statut)
         {
         case START:
@@ -127,6 +128,12 @@ void Game::HandleEvent(SDL_Event _event)
         default:
             break;
         }
+#else
+        if (_event.key.keysym.sym == SDLK_E)
+        {
+            return show_ia_display;
+        }
+#endif
     }
 }
 
@@ -165,6 +172,9 @@ void Game::CheckCollision()
                 if (enemy_manager.AddAsteroid(&(*a)) == true)
                 {
                     score += ASTEROID_SCORE;
+#if PYTHON
+                    current_ia_score += 1;
+#endif
                     a = list_asteroids->erase(a);
                 }
 
@@ -195,11 +205,29 @@ void Game::CheckCollision()
         {
             int *hp = player_manager.GetPlayerHpPtr();
             *hp = *hp - 1;
+#if PYTHON
+            current_ia_score -= 1;
+#endif
 
+#if !PYTHON
             if (*hp <= 0)
             {
                 statut = GAME_OVER;
             }
+#else
+
+            if (*hp <= 0)
+            {
+                statut = GAME_OVER;
+
+                current_ia_score -= 50;
+            }
+            else
+            {
+                current_ia_score += 0.1;
+            }
+
+#endif
 
             player_manager.HandleEffect(a->GetEffect());
             a = list_asteroids->erase(a);
@@ -298,7 +326,7 @@ void Game::Run()
 #endif
 }
 
-#if PYTHON || true
+#if PYTHON
 
 #include <algorithm>
 
@@ -334,7 +362,7 @@ std::vector<float> Game::GetAIInput(AIDataOutput _ai_data_output)
         float distB = std::hypot(b->GetPosition()->x - p_pos->x, b->GetPosition()->y - p_pos->y);
         return distA < distB; });
 
-    const int MAX_ASTEROIDS = 6;
+    const int MAX_ASTEROIDS = 10;
     int count = 0;
     for (auto *a : sorted_asteroids)
     {
@@ -371,6 +399,9 @@ void Game::Reset()
 
 AIDataInput Game::Step(AIDataOutput _ai_data_output)
 {
+    SDL_Event event = {};
+
+    current_ia_score = 0.f;
 
     HandleAIOutput(_ai_data_output);
 
@@ -388,7 +419,12 @@ AIDataInput Game::Step(AIDataOutput _ai_data_output)
         projectile_manager.Display(renderer);
     }
 
-    return {GetAIInput(_ai_data_output), };
+    input = GetAIInput(_ai_data_output);
+
+    input.push_back(float(current_ia_score));
+    input.push_back(float(score));
+
+    return input;
 }
 
 #endif
