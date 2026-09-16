@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "Game/AIData.hpp"
 #include "Game/Game.hpp"
 
@@ -17,4 +18,9 @@ PYBIND11_MODULE(SpaceShooter_IA, m)
         .def_readwrite("shoot", &AIDataOutput::shoot)
         .def_readwrite("x", &AIDataOutput::x)
         .def_readwrite("y", &AIDataOutput::y);
+
+    py::class_<Game>(m, "Game")
+        .def(py::init<>())
+        .def("reset", &Game::Reset)
+        .def("step", &Game::Step, py::arg("ai_output"));
 }

@@ -39,7 +39,7 @@ private:
     float current_ia_score = 0.f;
     bool show_ia_play = false;
     void HandleAIOutput(AIDataOutput _ai_data_output);
-    std::vector<float> GetAIInput(AIDataOutput _ai_data_output);
+    std::vector<float> GetAIInput();
 #endif
 
     void HandleEvent(SDL_Event _event);
@@ -55,7 +55,7 @@ public:
     bool IsRunning() { return run; }
 
 #if PYTHON
-    void Reset();
+    std::vector<float> Reset();
     std::vector<float> Step(AIDataOutput _ia_data_outpu);
 #endif
 };

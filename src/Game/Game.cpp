@@ -40,7 +40,14 @@ Game::Game()
     }
 
     // Creation de la fenetre.
-    window = SDL_CreateWindow("Space Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 900, 900, SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+#if PYTHON
+    SDL_WindowFlags window_flags = SDL_WINDOW_HIDDEN; // Fenêtre masquée par défaut pour l'entraînement rapide
+#else
+    SDL_WindowFlags window_flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
+
+    window = SDL_CreateWindow("Space Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 900, 900, window_flags);
 
     // Creation du rendu.
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -129,14 +136,15 @@ void Game::HandleEvent(SDL_Event _event)
             break;
         }
 #else
-        if (_event.key.keysym.sym == SDLK_E)
+        if (_event.key.keysym.sym == SDLK_e)
         {
-            return show_ia_display;
+            show_ia_play = !show_ia_play;
         }
 #endif
     }
 }
 
+#if !PYTHON
 void Game::Update()
 {
     ui_manager.Update(statut);
@@ -144,6 +152,7 @@ void Game::Update()
     enemy_manager.Update(width, height);
     projectile_manager.Update(width, height);
 }
+#endif
 
 void Game::Display()
 {
@@ -206,28 +215,12 @@ void Game::CheckCollision()
             int *hp = player_manager.GetPlayerHpPtr();
             *hp = *hp - 1;
 #if PYTHON
-            current_ia_score -= 1;
+            current_ia_score -= 10;
 #endif
-
-#if !PYTHON
             if (*hp <= 0)
             {
                 statut = GAME_OVER;
             }
-#else
-
-            if (*hp <= 0)
-            {
-                statut = GAME_OVER;
-
-                current_ia_score -= 50;
-            }
-            else
-            {
-                current_ia_score += 0.1;
-            }
-
-#endif
 
             player_manager.HandleEffect(a->GetEffect());
             a = list_asteroids->erase(a);
@@ -239,6 +232,7 @@ void Game::CheckCollision()
     }
 }
 
+#if !PYTHON
 void Game::Run()
 {
     int fps = 60;
@@ -326,6 +320,8 @@ void Game::Run()
 #endif
 }
 
+#endif
+
 #if PYTHON
 
 #include <algorithm>
@@ -337,14 +333,14 @@ void Game::HandleAIOutput(AIDataOutput _ai_data_output)
     projectile_manager.HandleAIOutput(_ai_data_output, *(player_manager.GetPlayerPositionPtr()));
 }
 
-std::vector<float> Game::GetAIInput(AIDataOutput _ai_data_output)
+std::vector<float> Game::GetAIInput()
 {
     std::vector<float> inputs;
 
     SDL_Point *p_pos = player_manager.GetPlayerPositionPtr();
 
-    inputs.push_back(float(p_pos->x / width));
-    inputs.push_back(float(p_pos->y / height));
+    inputs.push_back(float(p_pos->x) / width);
+    inputs.push_back(float(p_pos->y) / height);
     inputs.push_back(float(*(player_manager.GetPlayerHpPtr())));
 
     auto *asteroids = enemy_manager.GetAsteroidListPtr();
@@ -387,17 +383,26 @@ std::vector<float> Game::GetAIInput(AIDataOutput _ai_data_output)
         count++;
     }
 
-    inputs.push_back(1.0f);
+    inputs.push_back(float(current_ia_score));
+    inputs.push_back(float(score));
+
+    return inputs;
 }
 
-void Game::Reset()
+std::vector<float> Game::Reset()
 {
     player_manager.Reset();
     enemy_manager.Reset();
     projectile_manager.Reset();
+
+    score = 0;
+
+    statut = PLAY;
+
+    return GetAIInput();
 }
 
-AIDataInput Game::Step(AIDataOutput _ai_data_output)
+std::vector<float> Game::Step(AIDataOutput _ai_data_output)
 {
     SDL_Event event = {};
 
@@ -405,7 +410,7 @@ AIDataInput Game::Step(AIDataOutput _ai_data_output)
 
     HandleAIOutput(_ai_data_output);
 
-    player_manager.Update(width, height);
+    player_manager.Update(width, height, _ai_data_output);
     enemy_manager.Update(width, height);
     projectile_manager.Update(width, height);
 
@@ -413,18 +418,18 @@ AIDataInput Game::Step(AIDataOutput _ai_data_output)
 
     if (show_ia_play)
     {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
         ui_manager.Display(renderer, PLAY);
         enemy_manager.Display(renderer);
         player_manager.Display(renderer);
         projectile_manager.Display(renderer);
+
+        SDL_RenderPresent(renderer);
     }
 
-    input = GetAIInput(_ai_data_output);
-
-    input.push_back(float(current_ia_score));
-    input.push_back(float(score));
-
-    return input;
+    return GetAIInput();
 }
 
 #endif

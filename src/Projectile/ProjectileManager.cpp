@@ -78,8 +78,8 @@ void ProjectileManager::HandleAIOutput(AIDataOutput _ai_data_output, SDL_Point _
 {
     if (_ai_data_output.shoot)
     {
-        float dir_x = _ai_data_output.x;
-        float dir_y = _ai_data_output.y;
+        float dir_x = _ai_data_output.x - _player_position.x;
+        float dir_y = _ai_data_output.y - _player_position.y;
 
         float norme = sqrtf(dir_x * dir_x + dir_y * dir_y);
 
@@ -95,7 +95,7 @@ void ProjectileManager::HandleAIOutput(AIDataOutput _ai_data_output, SDL_Point _
 
         player_projectile.emplace_back(Projectile(
             _player_position,
-            {_ai_data_output.x, _ai_data_output.y},
+            projectile_direction,
             angle));
     }
 }

@@ -108,9 +108,7 @@ void EnemyManager::Update(int _width, int _height)
         timeNew -= 50;
         addMore += 1000;
     }
-#endif
-
-#if PYTHON
+#else
     if (addNewAsteroid < ticks)
     {
         asteroid_list.push_back(Asteroid(_width, _height));
@@ -273,10 +271,10 @@ void EnemyManager::Reset()
     timeNew = 500;
     asteroid_list.clear();
 #else
-    int ticks = 0;
-    int addNewAsteroid = 0;
-    int addMore = 300;
-    int timeNew = 10;
+    ticks = 0;
+    addNewAsteroid = 0;
+    addMore = 300;
+    timeNew = 10;
 #endif
 
     asteroid_list.clear();
