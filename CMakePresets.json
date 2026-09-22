@@ -27,7 +27,7 @@
             "name": "linux-python-AI",
             "displayName": "Linux-Python-AI",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build_linux",
+            "binaryDir": "${sourceDir}/build_linux_AI",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
@@ -40,7 +40,7 @@
             "name": "windows-python-AI",
             "displayName": "Windows-Python-AI",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build_windows",
+            "binaryDir": "${sourceDir}/build_windows_AI",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",

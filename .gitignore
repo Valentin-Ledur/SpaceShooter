@@ -3,4 +3,6 @@
 build
 build_web
 build_windows
+build_windows_AI
 build_linux
+build_linux_AI

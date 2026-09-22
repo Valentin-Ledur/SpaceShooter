@@ -22,5 +22,6 @@ PYBIND11_MODULE(SpaceShooter_IA, m)
     py::class_<Game>(m, "Game")
         .def(py::init<>())
         .def("reset", &Game::Reset)
-        .def("step", &Game::Step, py::arg("ai_output"));
+        .def("step", &Game::Step, py::arg("ai_output"))
+        .def("showaiplay", &Game::ShowAIPlay, py::arg("show"));
 }

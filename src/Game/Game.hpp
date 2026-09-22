@@ -42,6 +42,7 @@ private:
     std::vector<float> GetAIInput();
 #endif
 
+    void InitWindow();
     void HandleEvent(SDL_Event _event);
     void Update();
     void Display();
@@ -55,6 +56,7 @@ public:
     bool IsRunning() { return run; }
 
 #if PYTHON
+    void ShowAIPlay(bool _show);
     std::vector<float> Reset();
     std::vector<float> Step(AIDataOutput _ia_data_outpu);
 #endif

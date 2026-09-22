@@ -39,6 +39,13 @@ Game::Game()
         SDL_Log("Erreur: initialisation de SDL_TTF : %s\n", SDL_GetError());
     }
 
+#if !PYTHON
+    InitWindow();
+#endif
+}
+
+void Game::InitWindow()
+{
     // Creation de la fenetre.
 
 #if PYTHON
@@ -75,7 +82,6 @@ Game::Game()
     play_background = Utils::CreateTexture(renderer, PLAY_BACKGROUND_TEXTURE_PATH, rect_background);
 
     SDL_Point spawn = {int(width / 2.f), int(height / 2.f)};
-
     player_manager.Init(PLAYER_BASE_HP, spawn, renderer);
     ui_manager.Init(renderer, width, height, &score, &last_score, player_manager.GetPlayerHpPtr());
     enemy_manager.Init(renderer);
@@ -99,7 +105,6 @@ void Game::HandleEvent(SDL_Event _event)
 {
     while (SDL_PollEvent(&_event))
     {
-#if !PYTHON
         switch (statut)
         {
         case START:
@@ -135,12 +140,6 @@ void Game::HandleEvent(SDL_Event _event)
         default:
             break;
         }
-#else
-        if (_event.key.keysym.sym == SDLK_e)
-        {
-            show_ia_play = !show_ia_play;
-        }
-#endif
     }
 }
 
@@ -430,6 +429,23 @@ std::vector<float> Game::Step(AIDataOutput _ai_data_output)
     }
 
     return GetAIInput();
+}
+
+void Game::ShowAIPlay(bool _show)
+{
+    if (!_show && show_ia_play)
+    {
+        player_manager.Clean();
+        projectile_manager.Clean();
+        ui_manager.Clean();
+        enemy_manager.Clean();
+        show_ia_play = false;
+    }
+    else if (_show && !show_ia_play)
+    {
+        InitWindow();
+        show_ia_play = true;
+    }
 }
 
 #endif
