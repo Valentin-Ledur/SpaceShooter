@@ -159,6 +159,7 @@ void PlayerManager::Reset()
     *(player.GetHp()) = PLAYER_BASE_HP;
     *(player.GetPosition()) = start_position;
 
+    is_slow = false;
     speed = PLAYER_SPEED;
 
     up = false;

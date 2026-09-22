@@ -31,6 +31,7 @@ if(PYTHON)
 
     set_target_properties(SpaceShooter_IA PROPERTIES
         SUFFIX ".so"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/python"
     )
 
     target_include_directories(SpaceShooter_IA PUBLIC

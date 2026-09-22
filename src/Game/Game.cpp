@@ -39,9 +39,7 @@ Game::Game()
         SDL_Log("Erreur: initialisation de SDL_TTF : %s\n", SDL_GetError());
     }
 
-#if !PYTHON
     InitWindow();
-#endif
 }
 
 void Game::InitWindow()
@@ -49,7 +47,7 @@ void Game::InitWindow()
     // Creation de la fenetre.
 
 #if PYTHON
-    SDL_WindowFlags window_flags = SDL_WINDOW_HIDDEN; // Fenêtre masquée par défaut pour l'entraînement rapide
+    SDL_WindowFlags window_flags = SDL_WINDOW_HIDDEN;
 #else
     SDL_WindowFlags window_flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 #endif
@@ -103,6 +101,7 @@ Game::~Game()
 
 void Game::HandleEvent(SDL_Event _event)
 {
+#if !PYTHON
     while (SDL_PollEvent(&_event))
     {
         switch (statut)
@@ -141,6 +140,15 @@ void Game::HandleEvent(SDL_Event _event)
             break;
         }
     }
+#else
+    while (SDL_PollEvent(&_event))
+    {
+        if (_event.type == SDL_QUIT)
+        {
+            statut = GAME_OVER;
+        }
+    }
+#endif
 }
 
 #if !PYTHON
@@ -337,10 +345,11 @@ std::vector<float> Game::GetAIInput()
     std::vector<float> inputs;
 
     SDL_Point *p_pos = player_manager.GetPlayerPositionPtr();
+    int p_hp = *(player_manager.GetPlayerHpPtr());
 
     inputs.push_back(float(p_pos->x) / width);
     inputs.push_back(float(p_pos->y) / height);
-    inputs.push_back(float(*(player_manager.GetPlayerHpPtr())));
+    inputs.push_back(float(p_hp));
 
     auto *asteroids = enemy_manager.GetAsteroidListPtr();
     std::vector<Asteroid *> sorted_asteroids;
@@ -384,6 +393,7 @@ std::vector<float> Game::GetAIInput()
 
     inputs.push_back(float(current_ia_score));
     inputs.push_back(float(score));
+    inputs.push_back(statut == GAME_OVER ? 1.f : 0.f);
 
     return inputs;
 }
@@ -395,7 +405,6 @@ std::vector<float> Game::Reset()
     projectile_manager.Reset();
 
     score = 0;
-
     statut = PLAY;
 
     return GetAIInput();
@@ -404,7 +413,7 @@ std::vector<float> Game::Reset()
 std::vector<float> Game::Step(AIDataOutput _ai_data_output)
 {
     SDL_Event event = {};
-
+    HandleEvent(event);
     current_ia_score = 0.f;
 
     HandleAIOutput(_ai_data_output);
@@ -433,18 +442,16 @@ std::vector<float> Game::Step(AIDataOutput _ai_data_output)
 
 void Game::ShowAIPlay(bool _show)
 {
-    if (!_show && show_ia_play)
+    show_ia_play = _show;
+
+    if (show_ia_play)
     {
-        player_manager.Clean();
-        projectile_manager.Clean();
-        ui_manager.Clean();
-        enemy_manager.Clean();
-        show_ia_play = false;
+        SDL_ShowWindow(window);
+        SDL_RaiseWindow(window);
     }
-    else if (_show && !show_ia_play)
+    else
     {
-        InitWindow();
-        show_ia_play = true;
+        SDL_HideWindow(window);
     }
 }
 
