@@ -20,8 +20,8 @@ class Game
 private:
     int score = 0;
     int last_score = 0;
-    int width = 0;
-    int height = 0;
+    int width = 1000;
+    int height = 1000;
     bool run = true;
     SDL_Renderer *renderer = NULL;
     SDL_Window *window = NULL;
