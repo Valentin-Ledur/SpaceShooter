@@ -36,10 +36,11 @@ private:
     EnemyManager enemy_manager;
 
 #if PYTHON
+    int ticks = 0;
     float current_ia_score = 0.f;
     bool show_ia_play = false;
     void HandleAIOutput(AIDataOutput _ai_data_output);
-    std::vector<float> GetAIInput();
+    AIDataInput GetAIInput();
 #endif
 
     void InitWindow();
@@ -57,8 +58,8 @@ public:
 
 #if PYTHON
     void ShowAIPlay(bool _show);
-    std::vector<float> Reset();
-    std::vector<float> Step(AIDataOutput _ia_data_outpu);
+    AIDataInput Reset();
+    AIDataInput Step(AIDataOutput _ia_data_outpu);
 #endif
 };
 

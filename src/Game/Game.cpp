@@ -328,19 +328,21 @@ void Game::Run()
 }
 
 #endif
-
 #if PYTHON
 
 #include <algorithm>
 
 void Game::HandleAIOutput(AIDataOutput _ai_data_output)
 {
-
     player_manager.HandleAIData(_ai_data_output);
-    projectile_manager.HandleAIOutput(_ai_data_output, *(player_manager.GetPlayerPositionPtr()));
+
+    if (ticks % 10 == 0)
+    {
+        projectile_manager.HandleAIOutput(_ai_data_output, *(player_manager.GetPlayerPositionPtr()));
+    }
 }
 
-std::vector<float> Game::GetAIInput()
+AIDataInput Game::GetAIInput()
 {
     std::vector<float> inputs;
 
@@ -390,28 +392,32 @@ std::vector<float> Game::GetAIInput()
         inputs.push_back(0.0f);
         count++;
     }
+    inputs.push_back(ticks % 10 == 0 ? 1.f : 0.f);
+    AIDataInput data = {inputs, current_ia_score, statut == GAME_OVER ? true : false};
 
-    inputs.push_back(float(current_ia_score));
-    inputs.push_back(float(score));
-    inputs.push_back(statut == GAME_OVER ? 1.f : 0.f);
-
-    return inputs;
+    return data;
 }
 
-std::vector<float> Game::Reset()
+AIDataInput Game::Reset()
 {
     player_manager.Reset();
     enemy_manager.Reset();
     projectile_manager.Reset();
 
+    ticks = 0;
     score = 0;
     statut = PLAY;
 
     return GetAIInput();
 }
 
-std::vector<float> Game::Step(AIDataOutput _ai_data_output)
+AIDataInput Game::Step(AIDataOutput _ai_data_output)
 {
+    if (statut == GAME_OVER)
+    {
+        return GetAIInput();
+    }
+
     SDL_Event event = {};
     HandleEvent(event);
     current_ia_score = 0.f;
@@ -423,6 +429,8 @@ std::vector<float> Game::Step(AIDataOutput _ai_data_output)
     projectile_manager.Update(width, height);
 
     CheckCollision();
+
+    ticks++;
 
     if (show_ia_play)
     {

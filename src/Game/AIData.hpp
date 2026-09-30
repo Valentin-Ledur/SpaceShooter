@@ -5,10 +5,9 @@
 
 typedef struct AIDataInput
 {
-    std::vector<float> observation;
-    float reward = 0.0f;
+    std::vector<float> obs;
+    float training_score = 0.0f;
     bool done = false;
-    int score = 0;
 } AIDataInput;
 
 typedef struct AIDataOutput
@@ -19,8 +18,8 @@ typedef struct AIDataOutput
     bool left = false;
 
     bool shoot = false;
-    int x = 0;
-    int y = 0;
+    float x = 0;
+    float y = 0;
 } AIDataOutput;
 
 #endif

@@ -9,6 +9,12 @@ PYBIND11_MODULE(SpaceShooter_IA, m)
 {
     m.doc() = "Environnement SpaceShooter 2D C++ pour TensorFlow";
 
+    py::class_<AIDataInput>(m, "AIDataInput")
+        .def(py::init<>())
+        .def_readwrite("obs", &AIDataInput::obs)
+        .def_readwrite("training_score", &AIDataInput::training_score)
+        .def_readwrite("done", &AIDataInput::done);
+
     py::class_<AIDataOutput>(m, "AIDataOutput")
         .def(py::init<>())
         .def_readwrite("up", &AIDataOutput::up)

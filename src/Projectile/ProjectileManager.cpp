@@ -78,19 +78,10 @@ void ProjectileManager::HandleAIOutput(AIDataOutput _ai_data_output, SDL_Point _
 {
     if (_ai_data_output.shoot)
     {
-        float dir_x = _ai_data_output.x - _player_position.x;
-        float dir_y = _ai_data_output.y - _player_position.y;
+        float dir_x = _ai_data_output.x;
+        float dir_y = _ai_data_output.y;
 
-        float norme = sqrtf(dir_x * dir_x + dir_y * dir_y);
-
-        SDL_Point projectile_direction = {0, 0};
-
-        if (norme != 0)
-        {
-            projectile_direction.x = (dir_x / norme) * PROJECTILE_SPEED;
-            projectile_direction.y = (dir_y / norme) * PROJECTILE_SPEED;
-        }
-
+        SDL_Point projectile_direction = {int(dir_x * PROJECTILE_SPEED), int(dir_y * PROJECTILE_SPEED)};
         double angle = atan2(dir_y, dir_x) * 180.0 / M_PI;
 
         player_projectile.emplace_back(Projectile(
