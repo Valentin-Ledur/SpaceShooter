@@ -189,7 +189,7 @@ void Game::CheckCollision()
                 {
                     score += ASTEROID_SCORE;
 #if PYTHON
-                    current_ia_score += 1;
+                    current_ia_score += AI_ASTEROID_SCORE;
 #endif
                     a = list_asteroids->erase(a);
                 }
@@ -222,7 +222,7 @@ void Game::CheckCollision()
             int *hp = player_manager.GetPlayerHpPtr();
             *hp = *hp - 1;
 #if PYTHON
-            current_ia_score -= 10;
+            current_ia_score -= AI_LOSS_HP;
 #endif
             if (*hp <= 0)
             {
@@ -429,6 +429,11 @@ AIDataInput Game::Step(AIDataOutput _ai_data_output)
     projectile_manager.Update(width, height);
 
     CheckCollision();
+
+    if (statut != GAME_OVER)
+    {
+        current_ia_score += AI_SURVIVING_SCORE;
+    }
 
     ticks++;
 

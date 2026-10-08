@@ -95,4 +95,12 @@ const std::string ASTEROID_ICE_2_TEXTURE_PATH = "data/asteroid/ice/asteroid_ice_
 const std::string ASTEROID_ICE_3_TEXTURE_PATH = "data/asteroid/ice/asteroid_ice_3.webp";
 const std::string ASTEROID_ICE_4_TEXTURE_PATH = "data/asteroid/ice/asteroid_ice_4.webp";
 
+#if PYTHON
+
+const int AI_ASTEROID_SCORE = 30;
+const int AI_SURVIVING_SCORE = 0.1;
+const int AI_LOSS_HP = 200;
+
+#endif
+
 #endif
