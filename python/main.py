@@ -4,7 +4,6 @@ from model import *
 import os
 import numpy as np
 import math
-import tqdm
 import tensorflow as tf
 import keras
 from keras import Sequential, layers, Input
@@ -15,6 +14,23 @@ from keras import Model
 from collections import deque
 import datetime
 
+"""
+
+pip install tensorflow[and-cuda]
+pip install tensorboard
+
+tensorboard --logdir logs/spaceshooter/
+
+,
+    "features": {
+        "python": {
+            "description": "python interpretor dependencie",
+            "dependencies":[
+                "pybind11"
+            ]
+        }
+    }
+"""
 
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:

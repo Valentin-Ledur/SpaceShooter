@@ -7,7 +7,20 @@ if(PYTHON)
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
     find_package(SDL2_ttf REQUIRED)
-    find_package(pybind11 REQUIRED)
+
+    set(Python3_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/python/.venv")
+    set(Python3_EXECUTABLE "${Python3_ROOT_DIR}/bin/python")
+    
+    # On demande explicitement l'interpréteur ET les outils de développement (headers)
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
+    # On récupère le pybind11 installé via pip dans le venv
+    execute_process(
+        COMMAND ${Python3_EXECUTABLE} -c "import pybind11; print(pybind11.get_cmake_dir())"
+        OUTPUT_VARIABLE pybind11_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    find_package(pybind11 REQUIRED NO_DEFAULT_PATH PATHS ${pybind11_DIR})
 
     set(PYBIND11_FINDPYTHON ON)
     find_package(pybind11 CONFIG REQUIRED)

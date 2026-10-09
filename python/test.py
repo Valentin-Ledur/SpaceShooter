@@ -4,7 +4,6 @@ from model import *
 import os
 import numpy as np
 import math
-import tqdm
 import tensorflow as tf
 import keras
 from keras import Sequential, layers, Input
