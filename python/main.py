@@ -72,15 +72,15 @@ episode_count = 0
 frame_count = 0
 
 # Nombre de frame ou une action aléatoire est prise
-epsilon_random_frames = 50000
+epsilon_random_frames = 10000
 # Nombre de frame ou une action est prise par le model
-epsilon_greedy_frames = 50000000
+epsilon_greedy_frames = 1500000
 # Maximum replay length, valeur de la doc 100000
 max_memory_length = 1000000
 # Nombre d'action entre chaque update
 update_after_actions = 4
 # How often to update the target network
-update_target_network = 10000
+update_target_network = 5000
 
 # Experience replay buffers
 move_action_history = deque(maxlen=max_memory_length)
