@@ -20,7 +20,8 @@ Haut Gauche,
 """
 
 num_move_actions = 9
-num_shoot_actions = 37
+# num_shoot_actions = 37
+num_shoot_actions = 9
 
 num_parameters = 54
 
@@ -75,7 +76,7 @@ def OutputDataFromActions(move_action, shoot_action):
     if (shoot_action != 0):
         output.shoot = True
 
-        angle_deg = shoot_action * 10.0
+        angle_deg = shoot_action * 45.0 # avant 10
         angle_rad = math.radians(angle_deg)
 
         output.x = math.cos(angle_rad)

@@ -114,11 +114,12 @@ void EnemyManager::Update(int _width, int _height)
         asteroid_list.push_back(Asteroid(_width, _height));
         addNewAsteroid += timeNew;
     }
+    /*
     if (addMore < ticks && timeNew > 30)
     {
         timeNew -= 1;
         addMore += 1000;
-    }
+    }*/
 
     ticks++;
 #endif
@@ -271,10 +272,10 @@ void EnemyManager::Reset()
     timeNew = 500;
     asteroid_list.clear();
 #else
-    int ticks = 0;
-    int addNewAsteroid = 0;
-    int addMore = 300;
-    int timeNew = 60;
+    ticks = 0;
+    addNewAsteroid = 0;
+    addMore = 300;
+    timeNew = 15;
 #endif
 
     asteroid_list.clear();

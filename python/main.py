@@ -21,15 +21,6 @@ pip install tensorboard
 
 tensorboard --logdir logs/spaceshooter/
 
-,
-    "features": {
-        "python": {
-            "description": "python interpretor dependencie",
-            "dependencies":[
-                "pybind11"
-            ]
-        }
-    }
 """
 
 gpus = tf.config.list_physical_devices('GPU')
@@ -72,7 +63,7 @@ episode_count = 0
 frame_count = 0
 
 # Nombre de frame ou une action aléatoire est prise
-epsilon_random_frames = 10000
+epsilon_random_frames = 100000
 # Nombre de frame ou une action est prise par le model
 epsilon_greedy_frames = 1500000
 # Maximum replay length, valeur de la doc 100000
@@ -83,12 +74,14 @@ update_after_actions = 4
 update_target_network = 5000
 
 # Experience replay buffers
-move_action_history = deque(maxlen=max_memory_length)
-shoot_action_history = deque(maxlen=max_memory_length)
-state_history = deque(maxlen=max_memory_length)
-state_next_history = deque(maxlen=max_memory_length)
-rewards_history = deque(maxlen=max_memory_length)
-done_history = deque(maxlen=max_memory_length)
+state_history = np.zeros((max_memory_length, num_parameters), dtype=np.float32)
+state_next_history = np.zeros((max_memory_length, num_parameters), dtype=np.float32)
+move_action_history = np.zeros(max_memory_length, dtype=np.int32)
+shoot_action_history = np.zeros(max_memory_length, dtype=np.int32)
+rewards_history = np.zeros(max_memory_length, dtype=np.float32)
+done_history = np.zeros(max_memory_length, dtype=np.float32)
+
+buffer_counter = 0
 episode_reward_history = []
 
 optimizer = keras.optimizers.Adam(learning_rate=0.00025, clipnorm=1.0)
@@ -102,7 +95,7 @@ while True:
     model_inputs = SpaceShooter_IA.AIDataInput()
     model_inputs = env.reset()
 
-    state = model_inputs.obs
+    state = np.array(model_inputs.obs, dtype="float32")
     episode_reward = 0
 
     if episode_count % 50 == 0:
@@ -123,12 +116,13 @@ while True:
         else:
             state_tensor = keras.ops.convert_to_tensor(state)
             state_tensor = keras.ops.expand_dims(state_tensor, 0)
-            move_action_probs, shoot_action_probs = model(state_tensor, training=False)
 
-            move_action = np.array((keras.ops.argmax(move_action_probs[0])))
+            move_q_values, shoot_q_values = model(state_tensor, training=False)
+
+            move_action = int(keras.ops.argmax(move_q_values[0]))
 
             if (can_shoot):
-                shoot_action = np.array((keras.ops.argmax(shoot_action_probs[0])))
+                shoot_action = int(keras.ops.argmax(shoot_q_values[0]))
             else:
                 shoot_action = 0
 
@@ -143,55 +137,57 @@ while True:
         done = step_inputs.done
 
         episode_reward += reward
-        
-        move_action_history.append(move_action)
 
-        if (can_shoot):
-            shoot_action_history.append(shoot_action)
-        else:
-            shoot_action_history.append(-1)
-
-        state_history.append(state)
-        state_next_history.append(state_next)
-        done_history.append(done)
-        rewards_history.append(reward)
+        idx = buffer_counter % max_memory_length
+        state_history[idx] = state
+        state_next_history[idx] = state_next
+        move_action_history[idx] = move_action
+        shoot_action_history[idx] = shoot_action if can_shoot else -1
+        rewards_history[idx] = reward
+        done_history[idx] = float(done)
+        buffer_counter += 1
         state = state_next
 
+        current_buffer_size = min(buffer_counter, max_memory_length)
+
         if frame_count % update_after_actions == 0 and len(done_history) > batch_size:
-            indices = np.random.choice(range(len(done_history)), size=batch_size)
+            indices = np.random.choice(current_buffer_size, size=batch_size)
 
-            state_sample = np.array([state_history[i] for i in indices])
-            state_next_sample = np.array([state_next_history[i] for i in indices])
-            reward_sample = [rewards_history[i] for i in indices]
-            move_action_sample = [move_action_history[i] for i in indices]
-            shoot_action_sample = [shoot_action_history[i] for i in indices]
-            done_sample = keras.ops.convert_to_tensor([
-                float(done_history[i])  for i in indices
-            ])
+            state_sample = state_history[indices]
+            state_next_sample = state_next_history[indices]
+            reward_sample = rewards_history[indices]
+            move_action_sample = move_action_history[indices]
+            done_sample = done_history[indices]
 
-            raw_shoot = [shoot_action_history[i] for i in indices]
-            shoot_mask_valid = np.array([1.0 if a != -1 else 0.0 for a in raw_shoot], dtype=np.float32)
-            safe_shoot_actions = np.array([a if a != -1 else 0 for a in raw_shoot])
+            raw_shoot = shoot_action_history[indices]
+            shoot_mask_valid = (raw_shoot != -1).astype(np.float32)
+            valid_count = np.sum(shoot_mask_valid)
+            normalized_shoot_weights = shoot_mask_valid * (batch_size / (valid_count + 1e-8))
+            safe_shoot_actions = np.where(raw_shoot != -1, raw_shoot, 0)
 
-            future_reward_move, future_reward_shoot = model_target(state_next_sample, training=False)
-            move_updated_q_values = reward_sample + (1.0 - done_sample) * gamma * keras.ops.amax(future_reward_move, axis=1)
-            shoot_updated_q_values = reward_sample + (1.0 - done_sample) * gamma * keras.ops.amax(future_reward_shoot, axis=1)
+            next_move_q_values, next_shoot_q_values = model_target(state_next_sample, training=False)
+            max_next_move_q = keras.ops.amax(next_move_q_values, axis=1)
+            max_next_shoot_q = keras.ops.amax(next_shoot_q_values, axis=1)
+
+            target_move_q_values = reward_sample + (1.0 - done_sample) * gamma * max_next_move_q
+            target_shoot_q_values = reward_sample + (1.0 - done_sample) * gamma * max_next_shoot_q
 
             move_masks = keras.ops.one_hot(move_action_sample, num_move_actions)
             shoot_masks = keras.ops.one_hot(safe_shoot_actions, num_shoot_actions)
 
             with tf.GradientTape() as tape:
-                move_q_values, shoot_q_values = model(state_sample)
 
-                move_q_action = keras.ops.sum(keras.ops.multiply(move_q_values, move_masks), axis=1)
-                shoot_q_action = keras.ops.sum(keras.ops.multiply(shoot_q_values, shoot_masks), axis=1)
+                all_move_q, all_shoot_q = model(state_sample)
 
-                move_loss = loss_function(move_updated_q_values, move_q_action)
-                shoot_loss = loss_function(shoot_updated_q_values,shoot_q_action)
-                masked_shoot_loss = shoot_loss * shoot_mask_valid
-                shoot_loss = tf.reduce_sum(masked_shoot_loss) / (tf.reduce_sum(shoot_mask_valid) + 1e-8)
+                predicted_move_q = keras.ops.sum(keras.ops.multiply(all_move_q, move_masks), axis=1)
+                predicted_shoot_q = keras.ops.sum(keras.ops.multiply(all_shoot_q, shoot_masks), axis=1)
 
-                
+                move_loss = loss_function(target_move_q_values, predicted_move_q)
+                shoot_loss = loss_function(
+                    target_shoot_q_values, 
+                    predicted_shoot_q, 
+                    sample_weight=normalized_shoot_weights
+                )
 
                 loss = move_loss + shoot_loss
 

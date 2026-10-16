@@ -98,7 +98,7 @@ const std::string ASTEROID_ICE_4_TEXTURE_PATH = "data/asteroid/ice/asteroid_ice_
 #if PYTHON
 
 const int AI_ASTEROID_SCORE = 30;
-const int AI_SURVIVING_SCORE = 0.1;
+const float AI_SURVIVING_SCORE = 0.1f;
 const int AI_LOSS_HP = 200;
 
 #endif

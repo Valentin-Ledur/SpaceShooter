@@ -54,7 +54,7 @@ private:
     int ticks = 0;
     int addNewAsteroid = 0;
     int addMore = 300;
-    int timeNew = 60;
+    int timeNew = 15;
 #endif
 
     void DisplayBaseAsteroid(Asteroid _a, SDL_Renderer *_renderer, AsteroidType _type);
